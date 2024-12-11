@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/signup.css">
+
+<main class="main-content">
+  <div class="content-wrapper">
+    <img class="signup-image" src="https://cdn.builder.io/api/v1/image/assets/TEMP/c2dc7597e5ee89dd698d621a5117886fece2f879db0e18dca4fb9f8e98efd33f?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" />
+    
+    <form action="/do-login" class="signup-form" method="post">
+      <div class="form-header">
+        <h2 class="form-title">User Login</h2>
+        <p class="form-subtitle">Enter your account details to sign in</p>
+      </div>
+      <div class="form-fields">
+        <div class="input-group mb-3">
+          <div class="input-field w-100">
+            <input name="val" type="text" class="form-control {{#if login_info.val}}is-invalid invalid-height{{/if}}"
+              value="{{login_values.val}}"  placeholder="Email/Username">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e88ba37a8eb2b36d135b08665c7aa6ce13cedd88333ac1e4d5973bb829271429?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="input-icon" />
+            {{#if login_info.val}}<span class="invalid-feedback">{{login_info.val}}</span>{{/if}}
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-field w-100">
+            <input name="password" type="password" class="form-control {{#if login_info.password}}is-invalid invalid-height{{/if}}"
+              value="{{login_values.password}}" placeholder="Password">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9422b9607bc6d617ad6bf8adeb246baa7e600d551173d333a7309dc80a339e65?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="input-icon" loading="lazy" />
+            {{#if login_info.password}}<span class="invalid-feedback">{{login_info.password}}</span>{{/if}}
+          </div>
+        </div>
+      </div>
+      <div class="terms-agreement w-100 flex-row justify-content-between">
+        <div class="checkbox-wrapper border-0 align-self-start w-auto form-control {{#if login_info.terms}}is-invalid invalid-height{{/if}}">
+          <input type="checkbox" id="stay-signed"  {{#if (eq login_values.terms 'on')}}checked{{/if}}/>
+          <label for="stay-signed" class="terms-text">Stay Signed in</label>
+        </div>
+        {{#if login_info.terms}}<span class="invalid-feedback">{{login_info.terms}}</span>{{/if}}
+        <a href="/forgot-password" class="terms-text">Forgot password?</a>
+      </div>
+      <button type="submit" class="signup-button">Login</button>
+      <div class="or-divider">
+        <span>---------------</span> OR <span>----------------</span>
+      </div>
+      <a href="/auth/google" class="google-signup mb-2">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/65968de2004438662826ea254b3839fc7edd3e0d2b8aebeccbd0431bcecf640e?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Google Logo" class="google-icon" />
+        <span class="google-text">Sign in with Google</span>
+      </a>
+      <p class="login-link">Don't have an Account? <a href="/signup" style="font-weight: 700; text-decoration: underline">Create Account</a></p>
+    </form>
+  </div>
+</main>
+
+<script>
+
+  const info = '{{login_info}} | {{json login_values}}'
+  const status = '{{login_info.status}}'
+
+  if(status){
+    const {title,msg,icon} = JSON.parse('{{{json login_info}}}')
+    
+    Swal.fire({
+      title: title,
+      text: msg,
+      icon: icon,
+    }).then(() => {
+      $.ajax({
+          type: 'GET',
+          url: `/clear-session/${status}?destroy=${status}&&redirect=/login`,
+          success: function(msg) {
+          } // dont use reload here
+      });
+    })
+  }
+
+  $('.signup-form').on('submit',function(){
+    $('.loader-bg').css('display','flex')
+  })
+
+</script>

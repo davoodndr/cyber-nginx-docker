@@ -1,0 +1,438 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/cart.css">
+
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumbs">
+    <li class="breadcrumb-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+      <a>User</a>
+    </li>
+    <li class="breadcrumb-item breadcrumb-current">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+      <span aria-current="page">Shopping Cart</span>
+    </li>
+  </ol>
+</nav>
+
+<section class="cart-container">
+  <div class="cart-content">
+    <main class="cart-main">
+      <h1 class="cart-title mb-4">Shopping Cart</h1>
+      {{#if coupons.length}}
+        <div class="coupon-container row border g-2 overflow-auto">
+            {{#each coupons}}
+              <div class="coupon-wrapper col-md-4 m-0">
+                <div class="coupon-card">
+                  <div class="d-inline-flex flex-column">
+                    <h6 class="m-0">COUPON</h6>
+                    <span class="coupon-text">up to {{this.discount_value}}% discount on 
+                      min. cart amount of ₹{{this.min_cart_value}}</span>
+                  </div>
+                  <div class="copy-btn cursor-pointer btn btn-light px-1" onclick="copy('{{this.coupon_code}}')">
+                    <div style="--mask:url(/admin/images/icons/copy.svg); --w:24px; --h:24px; --mask-bg:black;"
+                    class="masked-div"></div>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+        </div>
+      {{/if}}
+      <div class="products-list mt-4">
+
+        <!-- Cart Item -->
+        {{#each cartItems}}
+          <article class="d-flex w-100 gap-2 position-relative cart-product-item-wrapper">
+            <button class="remove-btn" aria-label="Remove item" onclick="removeItem('{{@index}}','{{this.cartItem_id}}','{{this.product_id}}')">
+              <i class="las la-trash-alt fs-5"></i>
+            </button>
+            <div class="disabled-item-msg {{#if (and (eq this.product_status 'active') (eq this.category_status 'active'))}}d-none{{/if}}">
+              Product Unavailable
+            </div>
+            <div class="cart-product-item {{#if (and (eq this.product_status 'active') (eq this.category_status 'active'))}}''{{else}}disable-element{{/if}}">
+              <div class="position-relative">
+                <img src="{{this.thumb}}" alt="{{this.name}}" class="cart-product-image">
+              </div>
+              <div class="cart-product-details">
+                <div class="cart-product-info">
+                  <a href="/view-product/{{this.slug}}" class="cart-product-name m-0">{{this.name}}</a>
+                  
+                  <div class="coupon d-inline-flex align-items-center">
+                    <div class="d-inline-flex">
+                      <p class="product-price-single"><span class="fw-normal me-2">Coast:</span><span>{{this.price}}</span></p>
+                    </div>
+                    
+                  </div>
+                  <p class="max-quantity-info m-0 mb-1">Max. of <b>{{this.max_quantity}}</b> items can add to your cart</p>
+                  <div class="d-flex">
+                    {{#if this.offer_count}}
+                      <div class="d-inline-flex align-items-center">
+                        <label class="offer-detail m-0">Save <span class="offer_val price">{{this.offer_amount}}</span> OFF from <span class="offer_count">{{this.offer_count}}</span> offers</label>
+                      </div>
+                    {{/if}}
+                  </div>
+
+                </div>
+              </div>
+              <div class="product-controls">
+                  
+                <p class="cart-product-price m-0">{{this.item_total}}</p>
+                
+                <div class="quantity-control">
+                  <button class="quantity-btn" onclick="handleQuantityChange('decrease','{{this.product_id}}')" aria-label="Decrease quantity">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e263d8c55fe3890fe8fa8a69f71f9c02c5f21c0d6d0315f21b0858b9913f8148?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" >
+                  </button>
+                  <input type="number" value="{{this.quantity}}" oninput="handleQuantityChange(this,'{{this.product_id}}')" min="1" class="quantity-input" aria-label="Product quantity">
+                  <button class="quantity-btn" onclick="handleQuantityChange('increase','{{this.product_id}}')" aria-label="Increase quantity">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/569af448bab5116d5c04bcdb7d98cd196950630b6f82ce95035e99b51dbef370?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" >
+                  </button>
+                  
+                </div>
+              </div>
+
+            </div>
+          </article>
+        {{else}}
+          <div class="d-flex border w-100 justify-content-center rounded py-5">
+            <h5 class="m-0">Cart is empty now</h5>
+          </div>
+        {{/each}}
+
+      </div>
+    </main>
+
+    <aside class="cart-summary">
+      <h2 class="summary-title">Order Summary</h2>
+      <div class="summary-content">
+        <form class="bonus-section" autocomplete="off">
+          <label for="bonusCard" class="input-label">Your bonus card number</label>
+          <div class="cart-input-field">
+            <input type="text" id="bonusCard" value="{{couponToApply.coupon_code}}" placeholder="Enter Card Number">
+            <button type="button" class="apply-btn apply">Apply</button>
+            <button type="button" class="apply-btn remove">Remove</button>
+          </div>
+        </form>
+
+        <div class="summary-totals">
+          <div class="total-row">
+            <span class="total-label">Subtotal</span>
+            <span class="total-amount sub-total">{{this.subtotal}}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Estimated Tax</span>
+            <span class="total-amount total-tax">{{this.tax}}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Estimated shipping &amp; Handling</span>
+            <span class="total-amount shipping-charge">{{this.shippingCharge}}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Discounts</span>
+            <div>
+              -
+              <span class="total-amount discount-val">{{this.discounts}}</span>
+            </div>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Total</span>
+            <span class="total-amount grand-total">{{this.total}}</span>
+          </div>
+        </div>
+
+        <a href="/user/checkout" class="checkout-btn">Checkout</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script>
+
+  const status = '{{order_info.status}}'
+  if(status){
+    Swal.fire({
+      title: '{{order_info.title}}',
+      text: '{{order_info.msg}}',
+      icon:'{{order_info.icon}}',
+      confirmButtonText: 'OK'
+    }).then(()=> {
+      $.ajax({
+        type: 'GET',
+        url: '/clear-order-session',
+        success: function(response) {}
+      })
+    })
+  }
+
+  // increase/decrease quantity
+  function handleQuantityChange(event,product_id) {
+    const user = {{#if isLogged}} {{isLogged}} {{else}} undefined {{/if}};
+    let query = ''
+    if(!user){
+      Toast(2500,'error','Please login to add product to cart')
+      return false
+    }
+    
+    if(event === 'increase'){
+      query = `increase=true`
+    }else if(event === 'decrease'){
+      query = `decrease=true`
+    }else{
+      query = `quantity=${event.value}`
+    }
+
+    let data = {
+      product_id: product_id,
+    }
+    
+    $.ajax({
+      type: 'POST',
+      url:  `/add-to-cart?${query}`,
+      data: data,
+      success: function(response) {
+
+        if(!response.success){
+          Toast(5000,'error',response.msg).then(() => {
+            window.location.reload()  
+          })
+          return false
+        }
+
+        const cart = response.values.cart;
+        
+        if(response.success){
+          $('.cart .bubble').attr('aria-label', `${response.values.cart_count}`)
+          $('.cart .bubble').removeClass('hide')
+        }
+        if(cart && cart.length > 0){
+          $('.product-controls').each((index, element) => {
+            $(element).find('.quantity-input').val(cart[index].quantity)
+            $(element).find('.cart-product-price').html(cart[index].item_total)
+          })
+          $('.cart-product-details').each((index,element) => {
+            $(element).find('.max-quantity-info').find('b').text(cart[index].max_quantity)
+            $(element).find('.offer_val').text(cart[index].offer_value)
+            $(element).find('.offer_count').text(cart[index].offer_count)
+          })
+        }
+        if(response.values.coupon && response.values.coupon.success === false){
+          $('#bonusCard').val('')
+          Toast(2500,response.values.coupon.icon,response.values.coupon.msg)
+        }
+        $('.sub-total').html(response.values.subtotal)
+        $('.grand-total').html(response.values.total)
+        $('.total-tax').html(response.values.tax)
+        $('.discount-val').html(response.values.discounts)
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    })
+  }
+
+  // remove item from cart
+  function removeItem(index,itemId,product_id) {
+
+    
+    const coupons = $('#bonusCard').val()
+    const quantity = $('.products-list .cart-product-item').eq(index).find('.quantity-input').val()
+    const queries = `coupons=${coupons}&quantity=${quantity}`
+
+    $.ajax({
+      type: 'DELETE',
+      url:  `/remove-from-cart/${itemId}/${product_id}?${queries}`,
+      beforeSend: function(){
+        $('.loader-bg').css('display','flex')
+      },
+      success: function(response) {
+        $('.loader-bg').css('display','none')
+        if(response.success){
+          createCartTemplate(response.cart)
+          $('.discount-val').html(response.discounts)
+          $('.sub-total').html(response.subtotal)
+          $('.total-tax').html(response.tax)
+          $('.shipping-charge').html(response.shippingCharge)
+          $('.grand-total').html(response.total)
+
+          if(response.coupon && response.coupon.success === false){
+            $('#bonusCard').val('')
+            Toast(2500,response.coupon.icon,response.coupon.msg)
+          }
+          
+          if(response.cart_count === 0){
+            window.location.reload()
+          }else{
+
+            $('.cart .bubble').attr('aria-label', `${response.cart_count}`)
+          }
+        }
+      },
+      error: function(error) {
+        console.log(error);
+        $('.loader-bg').css('display','none')
+      }
+    })
+  }
+
+  function createCartTemplate(cart){
+    $('.products-list').html('')
+    cart.forEach((item, i) => {
+      $('.products-list').append(
+        `<article class="d-flex w-100 gap-2 position-relative cart-product-item-wrapper">
+          <button class="remove-btn" aria-label="Remove item" onclick="removeItem('${i}','${item.cartItem_id}','${item.product_id}')">
+            <i class="las la-trash-alt fs-5"></i>
+          </button>
+          <div class="disabled-item-msg">
+            Product Unavailable
+          </div>
+          <div class="cart-product-item">
+            <div class="position-relative">
+              <img src="${item.thumb}" alt="${item.name}" class="cart-product-image">
+            </div>
+            <div class="cart-product-details">
+              <div class="cart-product-info">
+                <a href="/view-product/${item.slug}" class="cart-product-name m-0">${item.name}</a>
+                <div class="coupon d-inline-flex align-items-center">
+                  <div class="d-inline-flex">
+                    <p class="product-price-single"><span class="fw-normal me-2">Coast:</span><span>${item.price}</span></p>
+                  </div>
+                  
+                </div>
+                <p class="max-quantity-info m-0 mb-1">Max. of <b>${item.max_quantity}</b> items can add to your cart</p>
+                <div class="d-flex offer-and-coupons">
+                  
+                </div>
+
+              </div>
+            </div>
+            <div class="product-controls">
+                
+              <p class="cart-product-price m-0">${item.item_total}</p>
+              
+              <div class="quantity-control">
+                <button class="quantity-btn" onclick="handleQuantityChange('decrease','${item.product_id}')" aria-label="Decrease quantity">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e263d8c55fe3890fe8fa8a69f71f9c02c5f21c0d6d0315f21b0858b9913f8148?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" >
+                </button>
+                <input type="number" value="${item.quantity}" oninput="handleQuantityChange(this,'${item.product_id}')" min="1" class="quantity-input" aria-label="Product quantity">
+                <button class="quantity-btn" onclick="handleQuantityChange('increase','${item.product_id}')" aria-label="Increase quantity">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/569af448bab5116d5c04bcdb7d98cd196950630b6f82ce95035e99b51dbef370?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" >
+                </button>
+                
+              </div>
+            </div>
+          </div>
+        </article>`
+      )
+
+      if(item.product_status === 'active')
+        $('.products-list').find('.cart-product-item-wrapper').eq(i).find('.disabled-item-msg').addClass('d-none')
+      if(item.product_status !== 'active') 
+        $('.products-list').find('.cart-product-item-wrapper').eq(i).find('.cart-product-item').addClass('disable-element')
+      
+      if(item.offer_count){
+        $('.products-list').find('.cart-product-item-wrapper').eq(i).find('.offer-and-coupons').append(
+          `<div class="d-inline-flex align-items-center">
+            <label class="offer-detail m-0">Save <span class="offer_val price">${item.offer_aount}</span> OFF from <span class="offer_count">${item.offer_count}}</span> offers</label>
+          </div> `
+        )
+      }
+
+    })
+  }
+
+
+  const appliedCoupon = {{#if couponToApply}} {{{json couponToApply}}} {{else}} undefined {{/if}}
+
+  if(appliedCoupon){
+    $('.apply-btn.apply').css('display','none')
+  }else{
+    $('.apply-btn.remove').css('display','none')
+  }
+
+  // quantity change handling
+
+  // coupon check handling
+  $('.apply-btn.apply').on('click', function(){
+
+    const coupons = $('#bonusCard').val()
+
+    $.ajax({
+      type: 'POST',
+      url:  '/apply-coupon',
+      data: {
+        coupon_code: coupons.trim()
+      },
+      success: function(response) {
+        
+        if(response.success){
+          $('.discount-val').html(response.discount)
+          $('.grand-total').html(response.total)
+          $('.apply-btn.apply').css('display','none')
+          $('.apply-btn.remove').css('display','inline-block')
+        }else{
+          Toast(2000,'error',response.msg)
+        }
+      }
+    })
+  })
+
+  $('.apply-btn.remove').on('click', function(){
+
+    $.ajax({
+      type: 'DELETE',
+      url:  '/remove-coupon',
+      success: function(response) {
+        
+        if(response.success){
+          $('.discount-val').html(response.discount)
+          $('.grand-total').html(response.total)
+          $('.apply-btn.remove').css('display','none')
+          $('.apply-btn.apply').css('display','inline-block')
+          $('#bonusCard').val('')
+        }else{
+          Toast(2000,'error',response.msg)
+        }
+      }
+    })
+  })
+
+  // remove coupon
+  function removeCoupon(index,itemId,product_id){
+    
+    const coupons = $('#bonusCard').val()
+    const quantity = $('.products-list .cart-product-item').eq(index).find('.quantity-input').val()
+    const queries = `coupons=${coupons}&discounts={{discounts}}&total=${parseFloat({{subtotal}})+parseFloat({{tax}})}`
+
+    if(coupons.length > 0){
+      $.ajax({
+        type: 'DELETE',
+        url:  `/remove-coupon/${itemId}/${product_id}?${queries}`,
+        success: function(response) {
+          
+          if(response.success){
+            $('.discount-val').html(response.discounts)
+            $('.grand-total').html(response.total)
+          }
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      })
+    }
+  }
+
+
+function copy(value){
+
+  let tempTextArea = document.createElement("textarea");
+  document.body.appendChild(tempTextArea);
+  tempTextArea.value = value;
+  tempTextArea.select();
+  tempTextArea.setSelectionRange(0, 99999);
+
+  document.execCommand("copy");
+  document.body.removeChild(tempTextArea);
+}
+
+</script>

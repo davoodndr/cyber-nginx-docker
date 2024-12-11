@@ -1,0 +1,58 @@
+.centered-container{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 1320px;
+}
+
+a{
+  text-decoration: none;
+}
+
+.logo{
+  width: 200px;
+  filter: invert(1);
+}
+
+.logo-text{
+  letter-spacing: 18px;
+}
+
+.logo-bg{
+  background-color: rgb(243, 243, 243);
+}
+
+.forgot-pass{
+  color: grey;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.forgot-pass:hover{
+  color: rgb(0, 153, 255);
+}
+
+.keep-logged{
+  font-size: 0.8rem;
+  color: grey;
+  font-weight: 500;
+}
+
+.active{
+	opacity: 1;
+	margin: 2rem 0;
+	animation: display 0.3s;
+}
+
+@keyframes display{
+	from{
+		opacity: 0;
+		margin: 0;
+	}
+	to{
+		opacity: 1;
+		margin: 2rem 0;
+	}
+}

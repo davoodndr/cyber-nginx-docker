@@ -1,0 +1,199 @@
+<link rel="stylesheet" href="/admin/styles/customers.css">
+
+<!-- Customers -->
+<section class="section-wrapper row p-3 m-0">
+  <!-- header -->
+  <div class="mb-3">
+    <h4>Users ({{length users}})</h4>
+  </div>
+  <!-- Table -->
+  <div class="table-wrapper">
+    <!-- table filter -->
+    <div class="filter-wrapper p-2">
+      <!-- search -->
+      <div class="search">
+        <div class="search-icon">
+          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_1182_4093)">
+            <path d="M11.4854 19.3121C15.9019 19.3121 19.4821 15.7319 19.4821 11.3154C19.4821 6.89893 15.9019 3.31873 11.4854 3.31873C7.06898 3.31873 3.48877 6.89893 3.48877 11.3154C3.48877 15.7319 7.06898 19.3121 11.4854 19.3121Z" fill="white" fill-opacity="0.01"/>
+            <path d="M21.4813 21.3112L17.1331 16.963M19.4821 11.3154C19.4821 15.7319 15.9019 19.3121 11.4854 19.3121C7.06898 19.3121 3.48877 15.7319 3.48877 11.3154C3.48877 6.89893 7.06898 3.31873 11.4854 3.31873C15.9019 3.31873 19.4821 6.89893 19.4821 11.3154Z" stroke="#6C737F" stroke-width="1.99943" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_1182_4093">
+            <rect width="23.99" height="23.99" fill="white" transform="translate(0.48999 0.319946)"/>
+            </clipPath>
+            </defs>
+          </svg>
+        </div>
+        <input type="text" class="form-control" placeholder="Search">
+      </div>
+
+      <!-- filters -->
+      <div class="filters">
+        <a href="" class="filter-button">
+          <div class="filter-icon">
+            <svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_526_7814)">
+              <path d="M10 6.40667L16 0.90667L22 6.40667H18V11.9067H14V6.40667H10Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 15.5733L8 21.0733L2 15.5733H6V10.0733H10V15.5733H14Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <defs>
+              <clipPath id="clip0_526_7814">
+              <rect width="24" height="22" fill="white" transform="translate(0 -0.00999451)"/>
+              </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <span>Sort</span>
+          <i class="las la-angle-down"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- table -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th><input class="form-check-input" type="checkbox"></th>
+          <th style="--w:250px">Customer</th>
+          <th style="--w:250px">Location</th>
+          <th style="--w:150px">Orders</th>
+          <th style="--w:200px">status</th>
+          <th style="--w:150px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each users}}
+          <tr>
+            <td><input class="form-check-input" type="checkbox"></td>
+            <td style="--w:250px">
+              <div class="d-flex align-items-center">
+                <div class="row-avatar">
+                  <img src="/admin/images/icons/avatar_m.png" alt="">
+                </div>
+                <div class="row-text-gruop">
+                  <p class="customer-name">{{this.username}}</p>
+                  <p class="customer-email">{{this.email}}</p>
+                </div>
+              </div>
+            </td>
+            <td style="--w:250px">
+              {{#if this.default_address}}
+              {{this.default_address.city}}, {{this.default_address.state}}, {{this.default_address.country}}
+              {{else}}
+              Address not found
+              {{/if}}
+            </td>
+            <td style="--w:150px">{{this.orders}}</td>
+            <td style="--w:200px">
+              <div class="status 
+                {{#if (eq this.user_status 'active')}} green
+                {{else if (eq this.user_status 'inactive')}} grey
+                {{else if (eq this.user_status 'draft')}} orange
+                {{else if (eq this.user_status 'blocked')}} red
+                {{/if}}
+              ">
+                <div class="indicator"></div>
+                <span>{{this.user_status}}</span>
+              </div>
+            </td>
+            <td style="--w:150px">
+              <div class="action-wrapper">
+                
+                
+                <div class="action-btn">
+                  <svg width="4" height="17" viewBox="0 0 4 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 16.98C1.45 16.98 0.979167 16.7841 0.5875 16.3925C0.195833 16.0008 0 15.53 0 14.98C0 14.43 0.195833 13.9591 0.5875 13.5675C0.979167 13.1758 1.45 12.98 2 12.98C2.55 12.98 3.02083 13.1758 3.4125 13.5675C3.80417 13.9591 4 14.43 4 14.98C4 15.53 3.80417 16.0008 3.4125 16.3925C3.02083 16.7841 2.55 16.98 2 16.98ZM2 10.98C1.45 10.98 0.979167 10.7841 0.5875 10.3925C0.195833 10.0008 0 9.52998 0 8.97998C0 8.42998 0.195833 7.95915 0.5875 7.56748C0.979167 7.17581 1.45 6.97998 2 6.97998C2.55 6.97998 3.02083 7.17581 3.4125 7.56748C3.80417 7.95915 4 8.42998 4 8.97998C4 9.52998 3.80417 10.0008 3.4125 10.3925C3.02083 10.7841 2.55 10.98 2 10.98ZM2 4.97998C1.45 4.97998 0.979167 4.78415 0.5875 4.39248C0.195833 4.00081 0 3.52998 0 2.97998C0 2.42998 0.195833 1.95915 0.5875 1.56748C0.979167 1.17581 1.45 0.97998 2 0.97998C2.55 0.97998 3.02083 1.17581 3.4125 1.56748C3.80417 1.95915 4 2.42998 4 2.97998C4 3.52998 3.80417 4.00081 3.4125 4.39248C3.02083 4.78415 2.55 4.97998 2 4.97998Z" fill="currentColor"/>
+                  </svg>
+                  <ul class="popup-menu">
+                    {{#if this.isBlocked}}
+                      <li>
+                        <a onclick="unblockUser('{{this._id}}')">
+                          <i class="las la-redo-alt"></i>
+                          <span>Unblock</span>
+                        </a>
+                      </li>
+                    {{else}}
+                      <li>
+                        <a onclick="blockUser('{{this._id}}')">
+                          <i class="lar la-trash-alt"></i>
+                          <span>Block</span>
+                        </a>
+                      </li>
+                    {{/if}}
+                  </ul>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  const info = '{{user_info}} | {{json user_values}}'
+  const status = '{{user_info.status}}'
+
+  if(status){
+    const {title,msg,icon} = JSON.parse('{{{json user_info}}}')
+    Swal.fire({
+      title: title,
+      text: msg,
+      icon: icon,
+    }).then(() => {
+      $.ajax({
+          type: 'GET',
+          url: `/admin/clear-session/${status}?destroy=${status}&&redirect=/login`,
+          success: function(msg) {}
+      });
+    })
+  }
+
+  function blockUser(id){
+    
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This user can\'n access his account!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, do it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: 'GET',
+          url: `/admin/block-user/${id}`,
+          success: function(msg) {
+            window.location.reload()
+          }
+        });
+      }
+    });
+  }
+
+  function unblockUser(id){
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This user can now access his account!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, do it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: 'GET',
+          url: `/admin/unblock-user/${id}`,
+          success: function(msg) {
+            window.location.reload()
+          }
+        });
+      }
+    });
+  }
+
+</script>

@@ -1,0 +1,259 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+
+<!-- Hero Banner -->
+<section class="banner">
+  <div class="banner-content">
+    <div class="banner-titles">
+      <h2 class="banner-subtitle">Pro.Beyond.</h2>
+      <h1 class="banner-title">IPhone 14 <span style="font-weight: 600">Pro</span></h1>
+    </div>
+    <p class="banner-description">Created to change everything for the better. For everyone</p>
+    <button class="banner-cta">Shop Now</button>
+  </div>
+  <div class="banner-image">
+    <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/8d540e3f81d190798d440dcdbb0a6b51754fa027d03d611527fc342d70ef0673?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" class="banner-img" alt="iPhone 14 Pro" />
+  </div>
+</section>
+
+<!-- Featured Banners -->
+<section class="featured-banners p-0">
+  <div class="d-flex justify-content-between h-100">
+    <!-- Left section -->
+    <div class="left col-6 d-flex flex-column">
+      <!-- top section -->
+      <div class="d-flex h-50">
+        <div class="d-inline-flex w-50">
+          <div class="wide-banner-content">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e46864a814c25f91fa3ce6880e7aad8fdf44ecad0ae0c4e2f8b42a5d0441201c?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="PlayStation 5">  
+          </div>
+        </div>
+        <div class="d-inline-flex flex-column w-50 justify-content-center">
+          <h2 class="wide-banner-title">Playstation 5</h2>
+          <p class="wide-banner-description">Incredibly powerful CPUs, GPUs, and an SSD with integrated I/O will redefine your PlayStation experience.</p>
+        </div>
+      </div>
+      <!-- bottom section -->
+      <div class="left-bottom d-flex h-50">
+        <div class="d-inline-flex w-50">
+          <div class="img-wrapper">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/28e16c2f9b62bf2d1f74837b96fe88b80556964b2dcfd99a51b1df6e1b7e2dff?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="AirPods Max">
+          </div>
+          <div class="titles d-inline-flex flex-column justify-content-center px-4 py-3 w-50">
+            <h3 class="square-banner-title">Apple <br> AirPods <span class="square-banner-title-bold">Max</span></h3>
+            <p class="square-banner-description">Computational audio. Listen, it's powerful</p>
+          </div>
+        </div>
+        <div class="d-inline-flex w-50">
+          <div class="img-wrapper-last">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b28db96c950873cbf35f90622187dbeabeb8136492ded99cfc9118fe9ead6388?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Apple Vision Pro">
+          </div>
+          <div class="titles  d-inline-flex flex-column justify-content-center px-4 py-3 w-50">
+            <h3 class="square-banner-title">Apple <br> Vision <span class="square-banner-title-bold">Pro</span></h3>
+            <p class="square-banner-description">An immersive way to experience entertainment</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right section -->
+    <div class="right col-6 d-flex">
+      <div class="d-inline-flex flex-column justify-content-center p-5">
+        <div class="big-banner-title-wrapper w-75">
+          <h2 class="big-banner-title">Macbook <span class="big-banner-title-bold">Air</span></h2>
+          <p class="big-banner-description">The new 15‑inch MacBook Air makes room for more of what you love with a spacious Liquid Retina display.</p>
+        </div>
+        <a href="#" class="big-banner-cta">Shop Now</a>
+      </div>
+      <div class="d-inline-flex">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/8f4e704434bacc9dd45fdb700e1edc7d3f8664115d1b41753b701b5d1e7130c5?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="MacBook Pro 14" class="big-banner-product">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="category-section">
+  <div class="category-header">
+    <h2 class="category-title">Browse By Category</h2>
+    <div class="category-nav">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c3307ad8f7000f2cd43296b08d04e5cf153a56f9ed163d9c460893782108ebbf?placeholderIfAbsent=true&amp;apiKey=4312beba142048a48d6010ff440bfdd8" alt="Left arrow" class="nav-arrow">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0eb6736c2eb32626282cfe2cffbd30bd43b7b50a5d001dc08fc52d4c472d90c1?placeholderIfAbsent=true&amp;apiKey=4312beba142048a48d6010ff440bfdd8" alt="Right arrow" class="nav-arrow">
+    </div>
+  </div>
+  <div class="category-grid">
+    {{#each categories}}
+      <a href="/collections?category={{this._id}}" class="category-item">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/7f4d39af36058aa4114687068cd02847a1cc980a86420afb0d3d5572c714a2c4?placeholderIfAbsent=true&amp;apiKey=4312beba142048a48d6010ff440bfdd8" alt="Phones icon" class="category-icon">
+        <span class="category-name">{{this.category_name}}</span>
+      </a>
+    {{/each}}
+  </div>
+</section>
+
+<!-- Products -->
+<section class="products-section">
+  <div class="product-grid">
+    <a href="/collections" class="d-inile-flex text-end mb-3 px-3 py-1 fw-bold border" style="width:fit-content; align-self:flex-end">Show more</a>
+    <div class="product-row">
+      {{#each (limit products 10)}}
+      <div class="product-item-card">
+        <a href="/view-product/{{this.product_slug}}" class="card-detail-wrapper">
+          <div class="bg-warning product-warning-badge">
+            <span class="badge">New</span>
+          </div>
+          <div class="card-img-wrapper">
+            <img src="{{this.images.[0]}}" alt="{{this.product_name}}">
+          </div>
+          <div class="d-flex flex-column w-100 rate-sum-wrapper">
+            <div class="d-inline-flex align-items-center justify-content-between">
+              <small class="capitalize small-muted">{{this.category.category_name}}</small>
+              <small class="capitalize small-muted {{#if this.stock}}text-success{{else}}text-danger{{/if}}">
+                {{#if this.stock}}{{this.stock}} in stock
+                {{else}}Out of stock
+                {{/if}}
+              </small>
+            </div>
+            <h6 class="mb-1">{{this.product_name}}</h6>
+            <div class="d-inline-flex card-rating">
+              <div class="product-card-rate-sum d-inline-block">
+                <div class="product-rating" style="width:{{this.rating.outOfFivePercent}}%">
+                </div>
+              </div>
+              <span class="mb-0 ms-1 card-rating-value">{{this.rating.averageRating}}</span>
+              <span class="devider"></span>
+              <i class="las la-sms"></i>
+              <span class="mb-0 ms-1 card-rating-value">{{this.rating.totalReviews}}</span>
+            </div>
+          </div>
+        </a>
+        <div class="card-price-wrapper">
+          <div class="d-inlne-flex flex-column">
+            <h4 class="m-0 price" style="line-height:1 !important">
+              {{#if this.discount}}{{this.pricing.selling_price}}
+              {{else}}{{this.pricing.original_price}}
+              {{/if}}
+            </h4>
+            {{#if this.discount}}
+            <div class="d-inline-flex card-offers">
+              <span class="original-price price"  style="line-height:1 !important">{{this.pricing.original_price}}</span>
+              <span class="ms-1 off-discount">-<span class="{{#if (eq this.discount_type 'fixed')}}price{{else}}percentage{{/if}}">{{this.discount}}</span></span>
+            </div>
+            {{/if}}
+          </div>
+          <div class="card-icons-wrapper">
+            <img class="favourit-img" src="/admin/images/icons/{{arrayMatch ../wishlist this._id 'like' 'unlike'}}.svg" 
+              style="border-color: {{arrayMatch ../wishlist this._id '#ff0000' ''}};"
+              onclick="addOrRemoveWishlist('.product-row .card-icons-wrapper','{{@index}}','{{this._id}}')" alt="New badge">
+            <img src="/admin/images/icons/cart_outline.svg" onclick="addToCart('{{this._id}}')" alt="">
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+
+<section class="featured-banners-section">
+  <div class="featured-banner">
+    <div class="featured-banner-content">
+      <h2 class="featured-banner-title">Popular Products</h2>
+      <p class="featured-banner-description">iPad combines a magnificent 10.2-inch Retina display, incredible performance, multitasking and ease of use.</p>
+      <a href="#" class="featured-banner-cta">Shop Now</a>
+    </div>
+    <img src="/admin/images/icons/Group 1.png" alt="iPad Pro" class="featured-banner-image">
+  </div>
+  <div class="featured-banner featured-banner-light">
+    <div class="featured-banner-content">
+      <h2 class="featured-banner-title">Ipad Pro</h2>
+      <p class="featured-banner-description">iPad combines a magnificent 10.2-inch Retina display, incredible performance, multitasking and ease of use.</p>
+      <a href="#" class="featured-banner-cta">Shop Now</a>
+    </div>
+    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ad64994840ac7a76bfdc0e42b901cb3dd47f5906d88822ed1b4fbaa7c83ef07c?placeholderIfAbsent=true&amp;apiKey=4312beba142048a48d6010ff440bfdd8" alt="iPad Pro" class="featured-banner-image">
+  </div>
+  <div class="featured-banner">
+    <div class="featured-banner-content">
+      <h2 class="featured-banner-title">Samsung Galaxy</h2>
+      <p class="featured-banner-description">iPad combines a magnificent 10.2-inch Retina display, incredible performance, multitasking and ease of use.</p>
+      <a href="#" class="featured-banner-cta">Shop Now</a>
+    </div>
+    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c5df89c74df730f82cc1acc0eb5f10f79cde50db352d2c669c1e8a512dc11f3d?placeholderIfAbsent=true&amp;apiKey=4312beba142048a48d6010ff440bfdd8" alt="Samsung Galaxy" class="featured-banner-image">
+  </div>
+  <div class="featured-banner featured-banner-dark">
+    <div class="featured-banner-content">
+      <h2 class="featured-banner-title">Macbook Pro</h2>
+      <p class="featured-banner-description">iPad combines a magnificent 10.2-inch Retina display, incredible performance, multitasking and ease of use.</p>
+      <a href="#" class="featured-banner-cta">Shop Now</a>
+    </div>
+    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/4275f4e118002979e0bcd3ea288da6649ddbfe667cb9dc53da87f1002fb95893?placeholderIfAbsent=true&amp;apiKey=4312beba142048a48d6010ff440bfdd8" alt="Macbook Pro" class="featured-banner-image">
+  </div>
+</section>
+
+<!-- Discounts -->
+<section class="discount-section">
+  <h2 class="discount-title mb-4">Discounts up to -50%</h2>
+  <div class="product-row">
+    
+    {{#each products}}
+      {{#if this.discount}}
+      <div class="product-item-card">
+        <a href="/view-product/{{this.product_slug}}" class="card-detail-wrapper">
+          
+          <div class="card-img-wrapper">
+            <img src="{{this.images.[0]}}" alt="{{this.product_name}}">
+          </div>
+          
+          <div class="d-flex flex-column w-100 rate-sum-wrapper">
+            <div class="d-inline-flex align-items-center justify-content-between">
+              <small class="capitalize small-muted">{{this.category.category_name}}</small>
+              <small class="capitalize small-muted {{#if this.stock}}text-success{{else}}text-danger{{/if}}">
+                {{#if this.stock}}{{this.stock}} in stock
+                {{else}}Out of stock
+                {{/if}}
+              </small>
+            </div>
+            <h6 class="mb-1">{{this.product_name}}</h6>
+            <div class="d-inline-flex card-rating">
+              <div class="product-card-rate-sum d-inline-block">
+                <div class="product-rating" style="width:{{this.rating.outOfFivePercent}}%">
+                </div>
+              </div>
+              <span class="mb-0 ms-1 card-rating-value">{{this.rating.averageRating}}</span>
+              <span class="devider"></span>
+              <i class="las la-sms"></i>
+              <span class="mb-0 ms-1 card-rating-value">{{this.rating.totalReviews}}</span>
+            </div>
+          </div>
+        </a>
+        <div class="card-price-wrapper">
+          <div class="d-inlne-flex flex-column">
+            <h4 class="m-0 price" style="line-height:1 !important">
+              {{#if this.discount}}{{this.pricing.selling_price}}
+              {{else}}{{this.pricing.original_price}}
+              {{/if}}
+            </h4>
+            {{#if this.discount}}
+            <div class="d-inline-flex card-offers">
+              <span class="original-price price"  style="line-height:1 !important">{{this.pricing.original_price}}</span>
+              <span class="ms-1 off-discount">-<span class="{{#if (eq this.discount_type 'fixed')}}price{{else}}percentage{{/if}}">{{this.discount}}</span></span>
+            </div>
+            {{/if}}
+          </div>
+          <div class="card-icons-wrapper">
+            <img class="favourit-img" src="/admin/images/icons/{{arrayMatch ../wishlist this._id 'like' 'unlike'}}.svg" 
+              style="border-color: {{arrayMatch ../wishlist this._id '#ff0000' ''}};"
+              onclick="addOrRemoveWishlist('.product-row .card-icons-wrapper','{{@index}}','{{this._id}}')" alt="New badge">
+            <img src="/admin/images/icons/cart_outline.svg" onclick="addToCart('{{this._id}}')" alt="">
+          </div>
+        </div>
+      </div>
+      {{/if}}
+    {{/each}}
+  </div>
+</section>
+
+<!-- Summer sale Banner -->
+<section class="summer-sale-banner p-0">
+  <img src="/admin/images/icons/Banner 2.png" alt="">
+</section>
+
+
+

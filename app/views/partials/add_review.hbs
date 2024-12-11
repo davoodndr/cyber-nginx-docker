@@ -1,0 +1,38 @@
+<div class="modal fade" id="addReview" tabindex="-1" aria-labelledby="addReviewLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+          <div class="modal-body container-fluid">
+            <div class="close-wrapper">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <h5 class="modal-title">Add your review</h5>
+              <form id="add-review-form">
+                <div class="d-flex justify-content-between align-items-center add-review-container mb-3">
+                  <label class="m-0 text-dark">Your Rating</label>
+                  <div class="star-rating">
+                    <button type="button" class="star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></button>
+                    <button type="button" class="star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></button>
+                    <button type="button" class="star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></button>
+                    <button type="button" class="star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></button>
+                    <button type="button" class="star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></button>
+                  </div>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="review-title" class="text-dark">Review title</label>
+                  <input type="text" class="form-control" id="review-title" placeholder="eg: Satisfied"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="categoryName" class="text-dark">Review detail</label>
+                  <textarea type="text" class="form-control" id="review-detail" rows="6" placeholder="Leave your comments here"></textarea>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                data-bs-dismiss="modal">Close</button>
+              <button type="submit" id="review-submit">Submit</button>
+            </div>
+      </div>
+  </div>
+</div>

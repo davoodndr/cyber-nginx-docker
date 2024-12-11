@@ -1,0 +1,101 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+
+<header class="row border-bottom m-0 w-100">
+  <div class="header-wrapper">
+    <div class="col-2 flex-1 logo-container">
+      <div class="ps-3 logo-wrapper">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c2ad55c5ba05bedbfed08051db0ca7676bb8a4f7df82f1add8dabfb196251216?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Company logo" class="logo">
+      </div>
+    </div>
+    <div class="col-4 flex-1 p-2 search-container">
+      <div class="search-wrapper bg-light py-2 border rounded-3 w-100">
+        <input type="search" placeholder="search" id="search-input" list="search-suggestions" autocomplete="off">
+        <datalist id="search-suggestions">
+        </datalist>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/87abccfee5b0c58161507b7a882c9280875d902d89bf659cdc47442fbeaf8d92?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Search icon" class="search-icon">
+      </div>
+    </div>
+    <nav class="col-4 d-flex flex-1 px-4 nav-menu">
+      <a href="/" class="nav-item">Home</a>
+      <a href="#" class="nav-item">About</a>
+      <a href="#" class="nav-item">Contact Us</a>
+      <a href="#" class="nav-item">Blog</a>
+    </nav>
+    <div class="col-2 d-inline-flex flex-1 icon-group">
+      <a href="/user/wishlist" class="px-2 wishlist icon-wrapper">
+        <span class="bubble" aria-label=""></span>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/850597cc14d3bfef027aa097fc5bca3ac1b650d683dc1d3c8c0134d5cd9a061d?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Notification icon" class="icon">
+      </a>
+      <a href="/user/cart" class="px-2 cart icon-wrapper">
+        <span class="bubble" aria-label=""></span>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/029756ee3f4e1ddfd459272b2d0d0c913d9b81d0c2080c70728d4f4f980e56e8?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Cart icon" class="icon">
+      </a>
+      <div class="px-2 icon-wrapper user-icon">
+        
+        <ul class="popup-menu">
+          {{#if isLogged}}
+            <li class="border-bottom">
+              <a href="/user/account">
+                <i class="las la-user-alt"></i>
+                <span>Account</span>
+              </a>
+            </li>
+            <li>
+              <a href="/logout">
+                <i class="las la-sign-out-alt"></i>
+                <span>Logout</span>
+              </a>
+            </li>
+          {{else}}
+            <li class="border-bottom">
+              <a href="/signup" class="pb-3 pt-2">
+                <span class="me-2 fs-6">New Customer? </span>
+                <span class="fs-5 text-primary">Sign Up</span>
+              </a>
+            </li>
+            <li>
+              <a href="/login" class="py-2">
+                <i class="las la-sign-in-alt fs-2"></i>
+                <span>Login</span>
+              </a>
+            </li>
+          {{/if}}
+        </ul>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/623c4cac7e655e2130b9da24f406303cabc4dde49c30b46e0a0fd141efdd615e?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Profile icon" class="profile-icon">
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+
+  $('#search-input').on('keydown',function(event) {
+    if (event.which === 13) { 
+      event.preventDefault(); 
+      const query = $(this).val();
+      if (query) {
+        window.location.href = `/collections?search=${query}`;
+      }
+    }
+  })
+
+  const cartItemsCount ='{{cartItemsCount}}'
+  
+  const wishlistCount = '{{length wishlist}}'
+  
+  if(cartItemsCount > 0) {
+    $('.cart .bubble').attr('aria-label',cartItemsCount);
+    $('.cart .bubble').removeClass('hide');
+  }else{
+    $('.cart .bubble').addClass('hide');
+  }
+
+  if(wishlistCount && wishlistCount > 0){
+    $('.wishlist .bubble').attr('aria-label',wishlistCount);
+    $('.wishlist .bubble').removeClass('hide');
+  }else{
+    $('.wishlist .bubble').addClass('hide');
+  }
+  
+
+</script>

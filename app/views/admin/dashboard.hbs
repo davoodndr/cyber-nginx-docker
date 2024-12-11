@@ -1,0 +1,307 @@
+<link rel="stylesheet" href="/admin/styles/dashboard.css">
+
+<section class="content-main">
+	<div class="content-header">
+			<div>
+					<h2 class="content-title card-title">Dashboard </h2>
+					<p>Whole data about your business here</p>
+			</div>
+	</div>
+
+	<!-- Statistics -->
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="row mb-4">
+				<div class="col-lg-4">
+					<div class="card card-body p-3 h-100">
+						<article class="icontext">
+							<span class="icon icon-sm rounded-circle bg-pink-light">
+								<div class="icon-container" 
+								style="mask-image: url(/admin/images/icons/category.svg); --color: #ff52ae; --size:24px"></div>
+							</span>
+							<div class="text">
+								<h6 class="mb-1 card-title">Total Orders</h6> <span>{{orders.count}}</span>
+								<span class="text-sm">
+									In {{orders.sold_items}} Products
+								</span>
+							</div>
+						</article>
+					</div>
+				</div>
+				<div class="col-lg-4">
+						<div class="card card-body p-3 h-100">
+								<article class="icontext">
+										<span class="icon icon-sm rounded-circle bg-primary-light">
+											<div class="icon-container" style="mask-image: url(/admin/images/icons/offer.svg); --color: rgb(0, 105, 190); --size:28px"></div>
+										</span>
+										<div class="text">
+												<h6 class="mb-1 card-title">Total Discounts</h6> <span class="price">{{orders.discounts}}</span>
+												<span class="text-sm">
+													Including offers &amp; coupons
+												</span>
+										</div>
+								</article>
+						</div>
+				</div>
+				<div class="col-lg-4">
+						<div class="card card-body p-3 h-100">
+								<article class="icontext">
+										<span class="icon icon-sm rounded-circle bg-success-light">
+											<div class="icon-container" style="mask-image: url(/admin/images/icons/rupee_bag.svg); --color: teal; --size:24px"></div>
+										</span>
+										<div class="text">
+											<h6 class="mb-1 card-title">Total Revenue</h6>
+											<span class="price">{{orders.revenue}}</span>
+											<span class="text-sm">
+												Shipping fees are included
+											</span>
+										</div>
+								</article>
+						</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12">
+						<div class="card mb-4">
+								<article class="card-body">
+									<div class="d-flex align-items-center justify-content-between px-3 py-3 border-bottom">
+										<h5 class="card-title m-0">Sale statistics</h5>
+										<div class="btn-group">
+											<button type="button" class="btn btn-danger rounded-start-4 capitalize">{{keyValue filter 'key' 'Today'}}</button>
+											<button type="button" class="btn btn-danger rounded-end-4 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+												<span class="visually-hidden">Toggle Dropdown</span>
+											</button>
+											<ul class="dropdown-menu">
+												<li><a class="dropdown-item {{#if filter.today}}bg-info-subtle{{/if}}" href="/admin/dashboard?today=true">Today</a></li>
+												<li><a class="dropdown-item {{#if filter.yesterday}}bg-info-subtle{{/if}}" href="/admin/dashboard?yesterday=true">Yesterday</a></li>
+												<li><a class="dropdown-item {{#if filter.thisWeek}}bg-info-subtle{{/if}}" href="/admin/dashboard?thisWeek=true">This Week</a></li>
+												<li><a class="dropdown-item {{#if filter.thisMonth}}bg-info-subtle{{/if}}" href="/admin/dashboard?thisMonth=true">This Month</a></li>
+												<li><a class="dropdown-item {{#if filter.thisYear}}bg-info-subtle{{/if}}" href="/admin/dashboard?thisYear=true">This Year</a></li>											
+											</ul>
+										</div>
+									</div>
+									<canvas id="myChart" height="150px" class="p-3"></canvas>
+								</article>
+						</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 mb-4">
+			<div class="card h-100">
+				<article class="card-body">
+						<h5 class="card-title p-3 border-bottom">Top Selling Products</h5>
+						<div class="new-member-list pb-2">
+							{{#each top_products as |product productIndex|}}
+								{{#if (gt (length this.matched_items) 0)}}
+								<div class="toper-item position-relative">
+									<ul class="w-100">
+									{{#each this.matched_items}}
+										<li>
+											<div class="row mx-0 align-items-center border-bottom justify-content-between">
+												<div class="col-lg-8 px-0">
+													<div class="d-flex align-items-center">
+														<img src="{{this.product_image}}" alt="" class="product-thumb">
+														<div class="my-auto">
+																<h6 class="m-0 top-product-name">{{this.product_name}}</h6>
+																<p class="text-muted font-xs m-0">
+																	{{this.category_name}}
+																</p>
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-4 px-0">
+													<div class="d-inline-flex gap-4 align-items-center justify-content-end w-100">
+														<div class="d-inline-flex flex-column">
+															<h6 class="m-0 text-success">{{this.sold_quantity}}</h6>
+															<p class="text-muted font-xs m-0">in sale</p>
+														</div>
+														<a href="#" class="badge {{#if (eq (add productIndex 1) 1)}}bg-success{{else}}text-success fw-bold bg-success-subtle{{/if}} rounded-pill">
+															{{add productIndex 1}}
+														</a>
+													</div>
+												</div>
+											</div>
+										</li>
+									{{/each}}
+									</ul>
+								</div>
+								{{else}}
+									<div class="row mx-0 align-items-center justify-content-between">
+										<div class="col-lg-8 px-0">
+											<div class="d-flex align-items-center">
+												<img src="{{this.product_image}}" alt="" class="product-thumb">
+												<div class="my-auto">
+														<h6 class="m-0 top-product-name">{{this.product_name}}</h6>
+														<p class="text-muted font-xs m-0">
+															{{this.category_name}}
+														</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-4 px-0">
+											<div class="d-inline-flex gap-4 align-items-center justify-content-end w-100">
+												<div class="d-inline-flex flex-column">
+													<h6 class="m-0 text-success">{{this.sold_quantity}}</h6>
+													<p class="text-muted font-xs m-0">in sale</p>
+												</div>
+												<a href="#" class="badge text-success fw-bold bg-success-subtle rounded-pill">{{add @index 1}}</a>
+											</div>
+										</div>
+									</div>
+								{{/if}}
+							{{else}}
+							<p class="p-3">Zero selling products now</p>
+							{{/each}}
+						</div>
+				</article>
+			</div>
+		</div>
+	</div>
+
+	<!-- Top selling Categories -->
+
+	<div class="row">
+		<!-- Categories -->
+		<div class="col-lg-4 mb-4">
+			<div class="card h-100">
+				<article class="card-body">
+					<h5 class="card-title p-3 border-bottom">Top Selling Categories</h5>
+					<div class="new-member-list px-3">
+						{{#each top_categories}}
+							<div class="d-flex align-items-center justify-content-between mb-4">
+								<div class="d-flex align-items-center">
+									<div class="my-auto">
+										<h6 class="m-0">{{this.category_name}}</h6>
+										<p class="text-black-50 font-xs m-0">
+											Sales in {{this.products}} products
+										</p>
+									</div>
+								</div>
+								<div class="d-inline-flex gap-4 align-items-center">
+									<div class="d-inline-flex flex-column">
+										<h6 class="m-0 text-success">{{this.sold_quantity}}</h6>
+										<p class="text-muted font-xs m-0">Sold</p>
+									</div>
+									<a class="badge bg-warning text-black rounded-pill">{{add @index 1}}</a>
+								</div>
+							</div>
+						{{else}}
+
+						{{/each}}
+					</div>
+				</article>
+			</div>
+		</div>
+
+		<!-- Brands -->
+		<div class="col-lg-4 mb-4">
+			<div class="card h-100">
+				<article class="card-body">
+					<h5 class="card-title p-3 border-bottom">Top Selling Brands</h5>
+					<div class="new-member-list px-3">
+						{{#each top_brands}}
+							<div class="d-flex align-items-center justify-content-between mb-4">
+								<div class="d-flex align-items-center">
+									<div class="my-auto">
+										<h6 class="m-0 capitalize">{{this._id}}</h6>
+										<p class="text-black-50 font-xs m-0">
+											Sales in {{this.products}} products
+										</p>
+									</div>
+								</div>
+								<div class="d-inline-flex gap-4 align-items-center">
+									<div class="d-inline-flex flex-column">
+										<h6 class="m-0 text-success">{{this.sold_quantity}}</h6>
+										<p class="text-muted font-xs m-0">Sold</p>
+									</div>
+									<a href="#" class="badge bg-warning text-black rounded-pill">{{add @index 1}}</a>
+								</div>
+							</div>
+						{{else}}
+
+						{{/each}}
+					</div>
+				</article>
+			</div>
+		</div>
+
+	</div>
+
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<script>
+
+	$('.toper-item').vTicker({
+			speed: 500,
+			pause: 3000,
+			animation: 'fade',
+			mousePause: false,
+			showItems: 1
+	});
+
+	(async function() {
+
+		
+		const data = {{{json chartData}}}
+		const validOrders = data.validOrders;
+		const dates = validOrders.map(item => item.date);
+    const totalSales = validOrders.map(item => item.revenue);
+
+		//cancelled
+		const cancelled = data.cancelledOrdes;
+    const cancelledSales = cancelled.map(item => item.revenue);
+
+		//pending orders
+		const pending = data.pendingOrders;
+    const pendingSales = pending.map(item => item.revenue);
+
+    // Create the chart
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const salesChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [
+					{
+						label: 'Orders',
+						data: totalSales,
+						tension: 0.3,
+						fill: true,
+						backgroundColor: 'rgba(4, 209, 130, 0.2)',
+						borderColor: 'rgb(4, 209, 130)',
+					},
+					{
+						label: 'Cancelled',
+						data: cancelledSales,
+						tension: 0.3,
+						fill: true,
+						backgroundColor: 'rgba(253, 138, 20, 0.2)',
+						borderColor: '#fd8a14',
+					},
+					{
+						label: 'Pending',
+						data: pendingSales,
+						tension: 0.3,
+						fill: true,
+						backgroundColor: 'rgba(44, 120, 220, 0.2)',
+						borderColor: 'rgba(44, 120, 220)',
+					},
+				]
+      },
+      options: {
+        responsive: true,
+				plugins: {
+					legend: {
+							labels: {
+								usePointStyle: true,
+							},
+					}
+				}
+      }
+    });
+
+	})();
+
+</script>

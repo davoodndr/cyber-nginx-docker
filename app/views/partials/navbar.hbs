@@ -1,0 +1,81 @@
+<!-- Menus -->
+<aside class="left-nav col-2 h-100 p-0">
+
+  <!-- Logo  -->
+  <div class="d-flex align-items-center justify-content-between border-bottom p-3">
+    <div class="d-inline-flex logo-wrapper">
+      <img class="img-fluid" src="/admin/images/icons/logo.svg" alt="">
+    </div>
+    <i class="las la-angle-down text-light"></i>
+  </div>
+
+  <!-- Menus -->
+  <nav class="p-0">
+    <!-- Menu item -->
+    <a href="/admin/dashboard" class="menu-item {{#if (eq pageName 'dashboard')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/Analytics.svg" alt="">
+        <span>Dashboard</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/users" class="menu-item {{#if (eq pageName 'users')}} active {{/if}} d-flex align-items-center justify-content-between">
+      
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/users.svg" alt="">
+        <span>Users</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/orders" class="menu-item {{#if (eq pageName 'orders')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/Cart.svg" alt="">
+        <span>Orders</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/products" class="menu-item {{#if (eq pageName 'products')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/bag.svg" alt="">
+        <span>Products</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/coupons" class="menu-item {{#if (eq pageName 'coupons')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/Discount Coupon.svg" alt="">
+        <span>Coupons</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/offers" class="menu-item {{#if (eq pageName 'offers')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/offer.svg" alt="">
+        <span>Offers</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/categories" class="menu-item {{#if (eq pageName 'categories')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/Categories.svg" alt="">
+        <span>Categories</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+    <!-- Menu item -->
+    <a href="/admin/sales-report" class="menu-item {{#if (eq pageName 'report')}} active {{/if}} d-flex align-items-center justify-content-between">
+      <div class="d-inline-flex">
+        <img class="me-2" src="/admin/images/icons/Report.svg" alt="">
+        <span>Report</span>
+      </div>
+      <i class="las la-angle-right"></i>
+    </a>
+  </nav>
+
+</aside>

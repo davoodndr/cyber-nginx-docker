@@ -1,0 +1,121 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/cart.css">
+
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumbs">
+    <li class="breadcrumb-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+      <a>User</a>
+    </li>
+    <li class="breadcrumb-item breadcrumb-current">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+      <span aria-current="page">Wishlist</span>
+    </li>
+  </ol>
+</nav>
+
+<section class="cart-container">
+  <div class="cart-content">
+    <main class="cart-main">
+      <h1 class="cart-title">Wishlist</h1>
+      <div class="products-list">
+
+        <!-- Cart Item -->
+        <div class="product-row">
+          {{#each wishlist}}
+            <div class="product-item-card wishlist-item">
+              <a class="product-header cursor-pointer z-10" style="top: 1.5%;" onclick="removeWishlistItem('{{this._id}}')">
+                <i class="las la-times fs-4 border rounded product-badge"></i>
+              </a>
+              <a href="/view-product/{{this.product.product_slug}}" class="card-detail-wrapper">
+                <div class="bg-warning product-warning-badge">
+                  <span class="badge">New</span>
+                </div>
+                <div class="card-img-wrapper">
+                  <img src="{{this.product.images.[0]}}" alt="{{this.product.product_name}}">
+                </div>
+                <div class="d-flex flex-column w-100 rate-sum-wrapper">
+                  <div class="d-inline-flex align-items-center justify-content-between">
+                    <small class="capitalize small-muted">{{this.product.category.category_name}}</small>
+                    <small class="capitalize small-muted {{#if this.product.stock}}text-success{{else}}text-danger{{/if}}">
+                      {{#if this.product.stock}}{{this.product.stock}} in stock
+                      {{else}}Out of stock
+                      {{/if}}
+                    </small>
+                  </div>
+                  <h6 class="mb-1">{{this.product.product_name}}</h6>
+                  <div class="d-inline-flex card-rating">
+                    <div class="product-card-rate-sum d-inline-block">
+                      <div class="product-rating" style="width:{{this.product.rating.outOfFivePercent}}%">
+                      </div>
+                    </div>
+                    <span class="mb-0 ms-1 card-rating-value">{{this.product.rating.averageRating}}</span>
+                    <span class="devider"></span>
+                    <i class="las la-sms"></i>
+                    <span class="mb-0 ms-1 card-rating-value">{{this.product.rating.totalReviews}}</span>
+                  </div>
+                </div>
+              </a>
+              <div class="card-price-wrapper">
+                <div class="d-inlne-flex flex-column">
+                  <h4 class="m-0 price" style="line-height:1 !important">
+                    {{#if this.product.discount}}{{this.product.pricing.selling_price}}
+                    {{else}}{{this.product.pricing.original_price}}
+                    {{/if}}
+                  </h4>
+                  {{#if this.product.discount}}
+                  <div class="d-inline-flex card-offers">
+                    <span class="original-price price"  style="line-height:1 !important">{{this.product.pricing.original_price}}</span>
+                    <span class="ms-1 off-discount">-<span class="{{#if (eq this.product.discount_type 'fixed')}}price{{else}}percentage{{/if}}">{{this.discount}}</span></span>
+                  </div>
+                  {{/if}}
+                </div>
+                <div class="card-icons-wrapper">
+                  <img src="/admin/images/icons/cart_outline.svg" onclick="addToBag('{{@index}}','{{this.product._id}}','{{this._id}}')" alt="">
+                </div>
+              </div>
+            </div>
+          {{else}}
+            <div class="d-flex border w-100 justify-content-center rounded py-5">
+              <h5 class="m-0">Wishlist is empty now</h5>
+            </div>
+          {{/each}}
+        </div>
+
+      </div>
+    </main>
+  </div>
+</section>
+
+<script>
+
+  const wishlist = {{{json wishlist}}}
+  
+  if(wishlist.length){
+    
+    wishlist.forEach((item,i) => {
+
+      const badge_wrapper = $('.product-row .product-item-card').eq(i).find('.product-warning-badge')
+      const badge = $('.product-row .product-item-card').eq(i).find('.product-warning-badge .badge')
+    
+      if(item.product.product_status === 'disabled' || 
+        item.product.category.category_status === 'disabled'){
+          $(badge_wrapper).removeClass('d-none')
+        }else{
+          $(badge_wrapper).addClass('d-none')
+        }
+      
+      if(item.product.product_status === 'disabled' || item.product.category.category_status === 'disabled'){
+        $(badge_wrapper).addClass('bg-danger-subtle')
+        $(badge).addClass('text-danger')
+        $(badge).html('Unavailable')
+      }
+      
+    })
+  }
+
+
+</script>

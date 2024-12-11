@@ -1,0 +1,6 @@
+# Ignore environment variable files
+.env
+
+node_modules
+
+todo_list.txt

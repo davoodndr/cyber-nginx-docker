@@ -1,0 +1,293 @@
+
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/view_order.css">
+
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumbs">
+	<li class="breadcrumb-item">
+	  <a href="/">Home</a>
+	</li>
+	<li class="breadcrumb-item">
+	  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+	  <a>User</a>
+	</li>
+	<li class="breadcrumb-item breadcrumb-current">
+	  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+	  <span aria-current="page">View Order</span>
+	</li>
+  </ol>
+</nav>
+
+<div class="row g-4 m-0 view-order-wrapper">
+  <!-- Left Column -->
+  <div class="col-lg-7">
+	  <div class="card">
+		  <div class="card-body">
+			  <!-- Order Header -->
+			  <div class="d-flex justify-content-between  mb-4">
+				  <div>
+					  <h5 class="mb-3">
+						  <span class="text-black-50 me-2">Order</span>{{order.order_no}}
+					  </h5>
+					  <div class="d-flex align-items-center gap-3">
+						  <span class="status small 
+														{{#if (eq order.payment_status 'unpaid')}} grey
+														{{else if (eq order.payment_status 'paid')}} green
+														{{else}} red
+														{{/if}}
+													">{{order.payment_status}}</span>
+						  <span class="status small
+														{{#if (eq order.order_status 'pending')}} grey
+														{{else if (eq order.order_status 'confirmed')}} orange
+														{{else if (eq order.order_status 'shipped')}} blue
+														{{else if (eq order.order_status 'delivered')}} green
+														{{else}} red
+														{{/if}}
+													">{{order.order_status}}</span>
+						  <div class="vr"></div>
+						  <small class="text-muted d-inline-flex align-items-center">
+							  <img src="/admin/images/icons/calendar.svg" class="me-1" alt="">
+							  {{formatDate order.createdAt 'DD MMM, YYYY • hh:mm A'}}</i>
+						  </small>
+					  </div>
+				  </div>
+				  <div class="d-flex align-items-start gap-2 {{#if (eq order.order_status 'cancelled')}}disable-element{{/if}}">
+						<button class="btn btn-outline-secondary btn-sm">
+							Cancel Order
+						</button>
+						<a href="/user/download-invoice?order={{order._id}}" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center invoice-btn">
+							<img src="/admin/images/icons/invoice.svg" class="me-1" alt="">
+							Invoice
+						</a>
+				  </div>
+			  </div>
+
+			  <!-- Order Items -->
+			  <div class="list-group mb-4">
+					{{#each order.cart}}
+						<div class="card py-2 px-3 bg-light mb-3">
+								<div class="row align-items-center">
+										<div class="col-md-8 d-flex gap-3">
+											<img src="{{this.thumb}}" alt="{{this.product_name}}" width="60" height="60" class="rounded">
+											<div class="d-inline-flex align-items-center h-auto">
+													<h6 class="mb-1 capitalize {{#if (eq this.item_status 'cancelled')}}line-through{{/if}}">
+														{{this.product_name}}
+													</h6>
+													{{!-- <small class="text-muted">Color: Deep Purple</small> --}}
+											</div>
+										</div>
+										<div class="col-md-4 d-flex justify-content-between align-items-center">
+											<span class="price {{#if (eq this.item_status 'cancelled')}}line-through{{/if}}">{{this.price}}</span>
+											<span class="px-3 {{#if (eq this.item_status 'cancelled')}}line-through{{/if}}">{{this.quantity}}</span>
+											<span class="fw-bold price {{#if (eq this.item_status 'cancelled')}}line-through{{/if}}">{{this.item_total}}</span>
+										</div>
+								</div>
+						</div>
+					{{/each}}
+			  </div>
+
+			  <!-- Order Summary -->
+			  <div class="card mb-4">
+				  <div class="card-body">
+					  <div class="d-flex align-items-center justify-content-between mb-2">
+						  <div>
+							  <span class="fw-bold">Subtotal</span>
+							  <span class="text-muted">({{orderItemsCount}} Items)</span>
+						  </div>
+						  <span class="price">{{order.order_subtotal}}</span>
+					  </div>
+					  <div class="d-flex align-items-center justify-content-between mb-2">
+						  <span class="text-muted">Estimated Tax</span>
+						  <span class="price">{{order.tax}}</span>
+					  </div>
+					  <div class="d-flex align-items-center justify-content-between mb-2">
+						  <span class="text-muted">Estimated Shipping &amp; Handling</span>
+						  <span class="price">{{order.shipping_charge}}</span>
+					  </div>
+					  <div class="d-flex align-items-center justify-content-between mb-3">
+						  <span class="text-muted">Discounts</span>
+							<div>
+								-
+								<span class="price text-danger">{{order.discounts}}</span>
+							</div>
+					  </div>
+					  <hr>
+					  <div class="d-flex align-items-center justify-content-between">
+						  <span class="fw-bold">Total</span>
+						  <span class="fw-bold price">{{order.order_total}}</span>
+					  </div>
+				  </div>
+			  </div>
+
+			  <!-- Tracking Info -->
+			  <div class="card border-0 mb-4">
+				  <div class="card-body p-0">
+					  <div class="row gx-4">
+						  <div class="col-md-6">
+								<div class="d-flex p-3 flex-column gap-3 border h-100 rounded">
+									<h6 class="text-muted mb-3">Applied Coupons &amp; Offers</h6>
+									<small class="d-block">Offers: 
+										{{#each order.offers}}
+										<span class="mx-1">{{this}},</span>
+										{{else}}
+										<span class="mx-1">None Applied</span>
+										{{/each}}
+									</small>
+									<small>Coupon: 
+										{{#if order.coupon}}
+                    <span class="mx-1">{{order.coupon.coupon_code}}</span>
+										{{else}}
+										<span class="mx-1">None Applied</span>
+                    {{/if}}
+									</small>
+								</div>
+						  </div>
+						  <div class="col-md-6">
+							  <div class="d-flex p-3 gap-4 border rounded">
+								  <img src="/admin/images/icons/Shipping.svg" class="px-2" alt="">
+								  <div>
+									  <div class="mb-2">
+										  <small class="text-muted">Payment Type:</small>
+										  <small class="capitalize">{{order.payment_method}}</small>
+									  </div>
+									  <div class="mb-2">
+										  <small class="text-muted">Delivery:</small>
+										  <small>Professional Courier</small>
+									  </div>
+									  <div class="mb-2">
+										  <small class="text-muted">Arrival Date:</small>
+										  <small>25 Jun 2024</small>
+									  </div>
+									  <div>
+										  <small class="text-muted">Tracking:</small>
+										  <small>4891549656594</small>
+									  </div>
+								  </div>
+							  </div>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+			
+				<!-- Order Summary after cancellation-->
+				{{#if (and cancelledSummery (neq order.order_status 'cancelled'))}}
+			  <div class="card mb-4">
+					<div class="card-header">
+						<h6 class="text-black-50 m-0">Order Summery after cancelleation</h6>
+					</div>
+				  <div class="card-body">
+					  <div class="d-flex align-items-center justify-content-between mb-2">
+						  <div>
+							  <span class="fw-bold">Subtotal</span>
+							  <span class="text-muted">({{cancelledSummery.orderItemsCount}} Items)</span>
+						  </div>
+						  <span class="price">{{cancelledSummery.order_subtotal}}</span>
+					  </div>
+					  <div class="d-flex align-items-center justify-content-between mb-2">
+						  <span class="text-muted">Estimated Tax</span>
+						  <span class="price">{{cancelledSummery.tax}}</span>
+					  </div>
+					  <div class="d-flex align-items-center justify-content-between mb-2">
+						  <span class="text-muted">Estimated Shipping &amp; Handling</span>
+						  <span class="price">{{cancelledSummery.shipping_charge}}</span>
+					  </div>
+					  <div class="d-flex align-items-center justify-content-between mb-3">
+						  <span class="text-muted">Discounts</span>
+							<div>
+								-
+								<span class="price text-danger">{{cancelledSummery.discounts}}</span>
+							</div>
+					  </div>
+					  <hr>
+					  <div class="d-flex flex-column align-items-center justify-content-between">
+							{{#if (gt cancelledSummery.cancelledRefunded 0)}}
+						  <div class="d-flex w-100 align-items-center justify-content-between mb-3">
+								<span class="text-muted">Refunded</span>
+						  	<span>-<span class="fw-bold price text-muted">{{cancelledSummery.cancelledRefunded}}</span></span>
+							</div>
+							{{/if}}
+							{{#if (gt cancelledSummery.cancelledNotRefunded 0)}}
+							<div class="d-flex w-100 align-items-center justify-content-between mb-3">
+								<span class="text-muted">Not Refunded</span>
+						  	<span>-<span class="fw-bold price text-muted">{{cancelledSummery.cancelledNotRefunded}}</span></span>
+							</div>
+							{{/if}}
+							<div class="d-flex w-100 align-items-center justify-content-between">
+								<span class="fw-bold">Total</span>
+						  	<span class="fw-bold price">{{cancelledSummery.order_total}}</span>
+							</div>
+					  </div>
+				  </div>
+			  </div>
+				{{/if}}
+
+		  </div>
+	  </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="col-lg-3">
+	  <div class="card">
+		  <div class="card-body">
+			  <h5 class="card-title mb-4">Customer</h5>
+			  
+			  <!-- Customer Info -->
+			  <div class="d-flex align-items-center justify-content-between pb-3 border-bottom">
+				  <div class="d-flex align-items-center gap-3">
+					  <img src="/admin/images/icons/avatar_m.png" alt="{{order.billing_address.fullname}}" width="50" height="50" class="rounded-circle">
+					  <span class="capitalize fw-bold">{{order.billing_address.fullname}}</span>
+				  </div>
+				  <a href="/user/account" class="arrow-right-up">
+					<img src="/admin/images/icons/arrow-up-right.svg" alt="">
+				  </a>
+			  </div>
+
+			  <div class="d-flex align-items-center justify-content-between py-4 border-bottom">
+				  <div class="d-flex align-items-center gap-3">
+					  <img src="/admin/images/icons/file-text.svg" alt="">
+					  <span class="fw-bold text-black-50" style="font-size: 15px;">{{order.totalOrders}} Orders</span>
+				  </div>
+				  <a href="/user/account" class="arrow-right-up">
+					<img src="/admin/images/icons/arrow-up-right.svg" alt="">
+				  </a>
+			  </div>
+
+			  <!-- Contact Info -->
+			  <div class="py-3 border-bottom">
+				  <h6 class="mb-3">Contact Info</h6>
+				  <div class="d-inline-flex w-100 align-items-center mb-2">
+					  <i class="las la-envelope me-2"></i>
+					  <small>{{order.billing_address.email}}</small>
+				  </div>
+				  <div class="d-inline-flex w-100 align-items-center ">
+					  <i class="las la-phone-volume me-2"></i>
+					  <small>{{order.billing_address.phone}}</small>
+				  </div>
+			  </div>
+
+			  <!-- Shipping Address -->
+			  <div class="border-bottom py-3">
+				  <h6 class="mb-3">Shipping Address</h6>
+				  <address class="small capitalize m-0">
+					  {{order.shipping_address.address}}, {{order.shipping_address.street}},
+					  {{#if order.shipping_address.landmark}}{{order.shipping_address.landmark}},{{/if}}
+					  {{order.shipping_address.city}}, {{order.shipping_address.pincode}}
+					  {{order.shipping_address.state}}, {{order.shipping_address.country}}
+				  </address>
+			  </div>
+
+			  <!-- Billing Address -->
+			  <div class="py-3">
+				  <h6 class="mb-3">Billing Address</h6>
+				  <address class="small capitalize mb-0">
+					  {{order.billing_address.address}}, {{order.billing_address.street}},
+					  {{#if order.billing_address.landmark}}{{order.billing_address.landmark}},{{/if}}
+					  {{order.billing_address.city}}, {{order.billing_address.pincode}}
+					  {{order.billing_address.state}}, {{order.billing_address.country}}
+				  </address>
+			  </div>
+		  </div>
+	  </div>
+  </div>
+</div>

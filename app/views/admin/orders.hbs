@@ -1,0 +1,204 @@
+<link rel="stylesheet" href="/admin/styles/products.css">
+
+<!-- Categories -->
+<section class="section-wrapper row p-3 m-0">
+  <!-- header -->
+  <div class="mb-5 title-wrapper">
+    <h4>Orders ({{total_items}})</h4>
+  </div>
+  <!-- Table -->
+  <div class="table-wrapper">
+    <!-- table filter -->
+    <div class="filter-wrapper p-2">
+      <!-- search -->
+      <div class="search">
+        <div class="search-icon">
+          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_1182_4093)">
+              <path d="M11.4854 19.3121C15.9019 19.3121 19.4821 15.7319 19.4821 11.3154C19.4821 6.89893 15.9019 3.31873 11.4854 3.31873C7.06898 3.31873 3.48877 6.89893 3.48877 11.3154C3.48877 15.7319 7.06898 19.3121 11.4854 19.3121Z" fill="white" fill-opacity="0.01"/>
+              <path d="M21.4813 21.3112L17.1331 16.963M19.4821 11.3154C19.4821 15.7319 15.9019 19.3121 11.4854 19.3121C7.06898 19.3121 3.48877 15.7319 3.48877 11.3154C3.48877 6.89893 7.06898 3.31873 11.4854 3.31873C15.9019 3.31873 19.4821 6.89893 19.4821 11.3154Z" stroke="#6C737F" stroke-width="1.99943" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_1182_4093">
+            <rect width="23.99" height="23.99" fill="white" transform="translate(0.48999 0.319946)"/>
+            </clipPath>
+            </defs>
+          </svg>
+        </div>
+        <input type="text" class="form-control" placeholder="Search">
+      </div>
+
+      <!-- filters -->
+      <div class="filters">
+        <a href="" class="filter-button">
+          <div class="filter-icon">
+            <svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_526_7814)">
+              <path d="M10 6.40667L16 0.90667L22 6.40667H18V11.9067H14V6.40667H10Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 15.5733L8 21.0733L2 15.5733H6V10.0733H10V15.5733H14Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <defs>
+              <clipPath id="clip0_526_7814">
+              <rect width="24" height="22" fill="white" transform="translate(0 -0.00999451)"/>
+              </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <span>Sort</span>
+          <i class="las la-angle-down"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- table -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th><input class="form-check-input" type="checkbox"></th>
+          <th style="--w:200px">Order</th>
+          <th style="--w:150px">Date</th>
+          <th style="--w:150px">Customer</th>
+          <th style="--w:150px">Status</th>
+          <th style="--w:150px">Payment Mode</th>
+          <th style="--w:150px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each orders}}
+          <tr>
+            <td><input class="form-check-input" type="checkbox"></td>
+            <td style="--w:200px">
+              <div class="name-wrapper">
+                <div class="thumb bg-light d-inline-flex flex-column align-items-center justify-content-center rounded-4">
+                  <p>{{formatDate this.createdAt 'MMM'}}</p>
+                  <h5 class="m-0">{{formatDate this.createdAt 'DD'}}</h5>
+                </div>
+                <div class="name-box">
+                  <p class="p-name">{{this.order_no}}</p>
+                  <p class="p-category text-black fs-6 price">{{this.order_total}}</p>
+                </div>
+              </div>
+            </td>
+            <td style="--w:150px">{{formatDate this.createdAt 'D-M-YYYY'}}</td>
+            <td style="--w:150px">{{this.billing_address.fullname}}</td>
+            <td style="--w:150px">
+              <div class="status small 
+                {{#if (eq this.order_status 'delivered')}} green
+                {{else if (eq this.order_status 'pending')}} grey
+                {{else if (eq this.order_status 'confirmed')}} yellow
+                {{else if (eq this.order_status 'cancelled')}} orange
+                {{else if (eq this.order_status 'shipped')}} blue
+                {{else if (eq this.order_status 'return')}} red
+                {{/if}}
+                ">
+                <span>{{this.order_status}}</span>
+              </div>
+            </td>
+            <td style="--w:150px">{{this.payment_method}}</td>
+            <td style="--w:150px">
+
+              <div class="action-wrapper">
+                <a href="/admin/view-order?id={{this._id}}" {{!-- id="edit-btn" onclick=""  --}}class="action-btn">
+                  <div class="masked-div" 
+                  style="--mask:url(/admin/images/icons/view_order.svg);--w:24px;--h:24px;--mask-bg:black"></div>
+                </a>
+                <div class="action-btn">
+                  <svg width="4" height="17" viewBox="0 0 4 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 16.98C1.45 16.98 0.979167 16.7841 0.5875 16.3925C0.195833 16.0008 0 15.53 0 14.98C0 14.43 0.195833 13.9591 0.5875 13.5675C0.979167 13.1758 1.45 12.98 2 12.98C2.55 12.98 3.02083 13.1758 3.4125 13.5675C3.80417 13.9591 4 14.43 4 14.98C4 15.53 3.80417 16.0008 3.4125 16.3925C3.02083 16.7841 2.55 16.98 2 16.98ZM2 10.98C1.45 10.98 0.979167 10.7841 0.5875 10.3925C0.195833 10.0008 0 9.52998 0 8.97998C0 8.42998 0.195833 7.95915 0.5875 7.56748C0.979167 7.17581 1.45 6.97998 2 6.97998C2.55 6.97998 3.02083 7.17581 3.4125 7.56748C3.80417 7.95915 4 8.42998 4 8.97998C4 9.52998 3.80417 10.0008 3.4125 10.3925C3.02083 10.7841 2.55 10.98 2 10.98ZM2 4.97998C1.45 4.97998 0.979167 4.78415 0.5875 4.39248C0.195833 4.00081 0 3.52998 0 2.97998C0 2.42998 0.195833 1.95915 0.5875 1.56748C0.979167 1.17581 1.45 0.97998 2 0.97998C2.55 0.97998 3.02083 1.17581 3.4125 1.56748C3.80417 1.95915 4 2.42998 4 2.97998C4 3.52998 3.80417 4.00081 3.4125 4.39248C3.02083 4.78415 2.55 4.97998 2 4.97998Z" fill="currentColor"/>
+                  </svg>
+                  <ul class="popup-menu">
+                    <li>
+                      <a href="/admin/change-status/{{this._id}}/confirmed">
+                        <i class="las la-check-circle fs-4"></i>
+                        <span>Confirmed</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/change-status/{{this._id}}/shipped">
+                        <i class="las la-shipping-fast"></i>
+                        <span>Shipped</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/change-status/{{this._id}}/delivered">
+                        <img src="/admin/images/icons/order-delivered.svg" alt="">
+                        <span>Delivered</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/cancel-order/{{this._id}}">
+                        <img src="/admin/images/icons/order-cancelled.svg" alt="">
+                        <span>Cancelled</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <!-- pagination -->
+    <div class="pagination-wrapper">
+      <div class="paginations">
+        <span class="me-2">Rows per page:</span>
+        <form action="/admin/orders" id="limit-form" method="get" class="d-inline-flex">
+          <select class="me-4" name="limit" id="limitSelect">
+            <option value="5" {{#if (eq page_limit 5)}} selected {{/if}}>5</option>
+            <option value="10"{{#if (eq page_limit 10)}} selected {{/if}}>10</option>
+            <option value="15"{{#if (eq page_limit 15)}} selected {{/if}}>15</option>
+            <option value="20"{{#if (eq page_limit 20)}} selected {{/if}}>20</option>
+          </select>
+        </form>
+        <span class="me-5">{{currentPage}} / {{totalPages}}</span>
+        <a href="{{#if (gt currentPage 1)}}?page={{subtract currentPage 1}}&limit={{page_limit}}{{/if}}" class="me-3">
+          <i class="las la-angle-left"></i>
+        </a>
+        <a href="{{#if (lt currentPage totalPages)}}?page={{add currentPage 1}}&limit={{page_limit}}{{/if}}">
+          <i class="las la-angle-right"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+
+  let info = '{{{json order_info}}}' ? JSON.parse('{{{json order_info}}}') : ''
+
+  // show actions on statuses
+  if(info && info.status){
+    Toast(1500, info.icon,info.msg)
+    .then(()=>{
+      $.ajax({
+        type: 'GET',
+        url: `/admin/orders/clear-session/${info.status}?redirect=admin/orders`,
+        success: function(msg) {}
+      });
+    });
+  }
+
+  function deleteProduct(id){
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This product won't availble for public!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $('#delete-form').submit()
+      }
+    });
+  }
+
+  // limit selector handling
+  $('#limitSelect').on('change', function (){
+    $('#limit-form').submit()
+  })
+</script>

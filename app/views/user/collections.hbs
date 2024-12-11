@@ -1,0 +1,545 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/collections.css">
+
+<style>
+  .pagination {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .pagination button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    outline: 1px solid #494a4f;
+    border-radius: 1px;
+    border: none;
+  }
+
+  .hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .pagination button.active {
+    background-color: #007bff;
+    color: white;
+  }
+</style>
+
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumbs">
+    <li class="breadcrumb-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+      <a href="/collections">Collections</a>
+    </li>
+    {{#if category}}
+      <li class="breadcrumb-item breadcrumb-current">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+        <span aria-current="page">{{category.category_name}}</span>
+      </li>
+    {{/if}}
+  </ol>
+</nav>
+
+<section class="content">
+  <div class="catalog-container">
+    <aside>
+      <p class="filters-label">Filters</p>
+      <div class="filters">
+        {{!-- Category Filter --}}
+        {{#if categories}}
+          <div class="filter-section">
+            <header class="filter-header">
+              <button class="filter-title-wrapper collapse-btn" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" aria-expanded="false" aria-controls="collapseExample">
+                <span class="filter-title">Category</span>
+                <i class="las la-angle-down rotate"></i>
+              </button>
+            </header>
+            <div class="collapse show" id="categoryCollapse">
+              <ul class="filter-items-list card card-body border-0 m-0">
+                {{#each categories}}
+                  <li class="filter-item">
+                    <input type="checkbox"class="form-check-input m-0" value="{{this._id}}">
+                    <label for="" class="filter-item-label" aria-label="{{this.product_count}}">{{this.category_name}}<label>
+                  </li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+        {{/if}}
+
+        {{!-- Brand Filter --}}
+        <div class="filter-section">
+          <header class="filter-header">
+            <button class="filter-title-wrapper collapse-btn" data-bs-toggle="collapse" data-bs-target="#brandCollapse" aria-expanded="false" aria-controls="collapseExample">
+              <span class="filter-title">Brand</span>
+              <i class="las la-angle-down rotate"></i>
+            </button>
+          </header>
+          <div class="collapse show" id="brandCollapse">
+            <ul class="filter-items-list card card-body border-0 m-0">
+              {{#each brands}}
+                <li class="filter-item">
+                  <input type="checkbox"class="form-check-input m-0" value="{{this.brand}}">
+                  <label for="" class="filter-item-label capitalize" aria-label="{{this.count}}">{{this.brand}}<label>
+                </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+
+        {{!-- Price filter --}}
+        <div class="filter-section">
+          <header class="filter-header">
+            <button class="filter-title-wrapper collapse-btn" data-bs-toggle="collapse" data-bs-target="#priceCollapse" aria-expanded="false" aria-controls="collapseExample">
+              <span class="filter-title">Price</span>
+              <i class="las la-angle-down rotate"></i>
+            </button>
+          </header>
+          <div class="collapse show" id="priceCollapse">
+            <div class="slider-container">
+              <div class="price-slider-wrapper">
+                <div id="priceSlider"></div>
+                <div class="values">
+                  <span id="minValue">0</span>
+                  <span class="from-to"></span>
+                  <span id="maxValue" class="plus">10000</span>
+                  <input type="hidden" id="sliderValues" value="0">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{!-- Stock Filter --}}
+        <div class="filter-section">
+          <header class="filter-header">
+            <button class="filter-title-wrapper collapse-btn" data-bs-toggle="collapse" data-bs-target="#stockCollapse" aria-expanded="false" aria-controls="collapseExample">
+              <span class="filter-title">Stock</span>
+              <i class="las la-angle-down rotate"></i>
+            </button>
+          </header>
+          <div class="collapse show" id="stockCollapse">
+            <ul class="filter-items-list card card-body border-0 m-0">
+              {{#each stocks}}
+                <li class="filter-item">
+                  <input type="checkbox"class="form-check-input m-0" value="{{this.stock}}">
+                  <label for="" class="filter-item-label capitalize {{#if (eq this.stock 0)}}text-danger{{/if}}" aria-label="{{this.count}}">
+                    {{#if (eq this.stock 0)}}
+                      Out of stock
+                    {{else}}
+                      {{this.stock}}
+                    {{/if}}
+                  <label>
+                </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+    <main class="product-catalog">
+      <header class="catalog-header">
+        <div class="product-count">
+          <span class="count-label">Total Products:</span>
+          <span class="count-value">0</span>
+        </div>
+        <select name="" id="collection-sort" class="form-select">
+          <option value="">Sort by</option>
+          <option value="popularity">Popularity</option>
+          <option value="rating">Rating</option>
+          <option value="new_arrivals">New Arrivals</option>
+          <option value="price_hightolow">Price hight to low</option>
+          <option value="price_lowtohigh">Price low to high</option>
+        </select>
+      </header>
+      <div class="product-grid">
+
+        <div class="product-row"></div>
+
+        <nav class="pagination" aria-label="Pagination">
+          <img class="pagination-arrow cursor-pointer" id="prevPage" src="https://cdn.builder.io/api/v1/image/assets/TEMP/2de423749e642867f9234165a24938928b2cdf9588d343cd6065b87c0140930f?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Previous page"  />
+            <div class="page-numbers">
+              {{!-- <a href="#" class="page-number current-page" aria-current="page">1</a>
+              <a href="#" class="page-number">2</a>
+              <a href="#" class="page-number">3</a>
+              <span class="page-number">...</span>
+              <a href="#" class="page-number">12</a> --}}
+            </div>
+          <img class="pagination-arrow cursor-pointer" id="nextPage" src="https://cdn.builder.io/api/v1/image/assets/TEMP/32e251b14d565c4eb407dc8336096dd9c021e5846afae8e292102cae656ec431?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Next page"  />
+          
+        </nav>
+        
+      </div>
+    </main>
+  </div>
+</section>
+
+
+<script>
+
+  let currentPage = 1
+  let totalPages = 0
+
+  $('.filters').on('click','.collapse-btn', function(e){
+    $(this).find('i').toggleClass('rotate')
+  })
+
+  $('.collapse.show').click(function(e) {
+    
+    const checked = $(e.target).parent('li').find('input').prop('checked')
+    $(e.target).parent('li').find('input').prop('checked', !checked);
+
+    if(e.target.localName === 'label' || e.target.localName === 'input'){
+      e.stopPropagation()
+      const filters = createFilters()
+      sendData(filters)
+    }
+  })
+
+  $('#sliderValues').on('change',function(e) {
+    const filters = createFilters()
+    sendData(filters)
+  })
+
+  const cat = '{{category._id}}'
+
+  function createFilters(search = null){
+
+    const categories = cat ? [cat] : $('#categoryCollapse.collapse.show').find('input:checked').map(function(){
+      return $(this).val()
+    }).get()
+
+    const brands = $('#brandCollapse.collapse.show').find('input:checked').map(function(){
+      return $(this).val()
+    }).get()
+
+    const prices = $('#priceCollapse.collapse.show').find('span:not(:has(.from-to))').map(function(){
+      return $(this).text() === '10000' ? '10000000' :  $(this).text()
+    }).get().filter(item => item.trim()!== '')
+
+    const stocks = $('#stockCollapse.collapse.show').find('input:checked').map(function(){
+      return $(this).val()
+    }).get()
+
+    const sort = $('#collection-sort :selected').val()
+    const sortOrder = $('#collection-sort :selected').val() === 'price_lowtohigh' ? 'asc' : 'desc'
+
+    return {
+      categories: categories.length > 0 ? categories.join(',') : null,
+      brands: brands.length > 0 ? brands.join(',') : null,
+      prices: prices.length > 0 ? prices.join(',') : null,
+      stocks: stocks.length > 0 ? stocks.join(',') : null,
+      sort: sort.length > 0? sort : null,
+      sortOrder: sortOrder.length > 0? sortOrder : null,
+      search: search,
+    }
+  }
+
+  $('#collection-sort').change(function(){
+    const filters = createFilters()
+    sendData(filters)
+  })
+
+  if(cat) sendData(createFilters(),currentPage) 
+    else sendData({},currentPage)
+
+  function sendData(filters,currentPage){
+
+    $.ajax({
+      type: 'POST',
+      url: `/collections/filter?page=${currentPage}{{!-- &pageSize=${pageSize} --}}`,
+      data: filters,
+      beforeSend: function(){
+        $('.loader-bg').css('display','flex')
+      },
+      success: function(response){
+
+        $('.loader-bg').css('display','none')
+
+        let payload = response.payload;
+        totalPages = response.totalPages;
+        currentPage = response.currentPage
+        
+        if(payload.length > 0){
+
+          $('.product-row').html('')
+
+          payload.forEach((product,i) => {
+            const wishlist = '{{wishlist}}'.split(',')
+          
+            $('.product-row').append(`
+            <div class="product-item-card border animate pop" style="--delay:${i/11}s">
+              <div class="bg-warning product-warning-badge">
+                <span class="badge">New</span>
+              </div>
+              <a href="/view-product/${product.product_slug}" class="card-detail-wrapper">
+                <div class="card-img-wrapper">
+                  <img src="${product.images[0]}" alt="${product.product_name}">
+                </div>
+                
+                <div class="d-flex flex-column w-100 rate-sum-wrapper">
+                  <div class="d-inline-flex align-items-center justify-content-between">
+                    <small class="capitalize small-muted">${product.category.category_name}</small>
+                    <small class="capitalize small-muted">
+                      
+                    </small>
+                  </div>
+                  <h6 class="mb-1">${product.product_name}</h6>
+                  <div class="d-inline-flex card-rating">
+                    <div class="product-card-rate-sum d-inline-block">
+                      <div class="product-rating" style="width:${product.rating.outOfFivePercent}%">
+                      </div>
+                    </div>
+                    <span class="mb-0 ms-1 card-rating-value">${product.rating.averageRating}</span>
+                    <span class="devider"></span>
+                    <i class="las la-sms"></i>
+                    <span class="mb-0 ms-1 card-rating-value">${product.rating.totalReviews}</span>
+                  </div>
+                </div>
+              </a>
+              <div class="card-price-wrapper">
+                <div class="d-inlne-flex flex-column">
+                  <h4 class="m-0 price" style="line-height:1 !important">
+                    ${product.discount ? product.pricing.selling_price : product.pricing.original_price}
+                  </h4>
+                  ${product.discount ?
+                  `<div class="d-inline-flex card-offers">
+                    <span class="original-price price"  style="line-height:1 !important">${product.pricing.original_price}</span>
+                    <span class="ms-1 off-discount">-<span class="${product.discount_type === 'fixed' ? 'price' : 'percentage'}">${product.discount}</span></span>
+                  </div>` : ''
+                  }
+                </div>
+                <div class="card-icons-wrapper">
+                  <img class="favourit-img" src="/admin/images/icons/{{arrayMatch ../wishlist this._id 'like' 'unlike'}}.svg"
+                    onclick="addOrRemoveWishlist('.product-row .card-icons-wrapper','${i}','${product._id}')" alt="New badge">
+                  <img src="/admin/images/icons/cart_outline.svg" onclick="addToCart('${product._id}')" alt="">
+                </div>
+              </div>
+              {{!-- <div class="buy-button-wrapper">
+                <a href="#" class="buy-now-button">Buy Now</a>
+              </div> --}}
+            </div>
+            `)
+            
+            if(product.stock){
+              $('.product-row .product-item-card .rate-sum-wrapper').eq(i).find('small:last-child').addClass('text-success')
+              $('.product-row .product-item-card .rate-sum-wrapper').eq(i).find('small:last-child').text(`${product.stock} in stock`)
+            }else{
+              $('.product-row .product-item-card .rate-sum-wrapper').eq(i).find('small:last-child').addClass('text-danger')
+              $('.product-row .product-item-card .rate-sum-wrapper').eq(i).find('small:last-child').text(`Out of stock`)
+            }
+
+            const badge_wrapper = $('.product-row .product-item-card').eq(i).find('.product-warning-badge')
+            const badge = $('.product-row .product-item-card').eq(i).find('.product-warning-badge .badge')
+
+            if(product.product_status === 'disabled' || 
+              product.category.category_status === 'disabled' {{!-- ||
+              product.coupons.length > 0 --}}){
+                $(badge_wrapper).removeClass('d-none')
+              }else{
+                $(badge_wrapper).addClass('d-none')
+              }
+            if(product.product_status === 'disabled' || product.category.category_status === 'disabled'){
+              $(badge_wrapper).addClass('bg-danger-subtle')
+              $(badge).addClass('text-danger')
+              $(badge).html('Unavailable')
+            }
+
+            wishlist.forEach(item => {
+              if(item === product._id){
+                $('.product-row .card-icons-wrapper').eq(i).find('img.favourit-img').attr('src','/admin/images/icons/like.svg')
+                $('.product-row .card-icons-wrapper').eq(i).find('img.favourit-img').css('border-color','#ff0000')
+              }
+            })
+
+          })
+        }else{
+          $('.product-row').html(`
+            <div class="d-flex border border-warning rounded-4 justify-content-center w-100 animate" style="--delay:0.2s">
+              <span class="p-5 fw-bold text-secondary">No Products Found</span>
+            </div>
+          `)
+        }
+        $('.count-value').text(response.totalOrders)
+        generatePaginationButtons(totalPages,currentPage)
+      }
+    });
+
+    function generatePaginationButtons(totalPages,currentPage) {
+
+      $('.pagination .page-numbers').empty();
+      
+      // Page buttons
+      for (let i = 1; i <= totalPages; i++) {
+        $('.pagination .page-numbers').append(`<a class="cursor-pointer page-number" data-page="${i}">${i}</a>`);
+        if(i == currentPage){
+          $('.pagination .page-number').eq(i-1).addClass('current-page');
+        }
+      }
+
+    }
+  
+  }
+
+  // Handle pagination button click
+  $('.pagination').on('click', '.page-number', function() {
+    currentPage = $(this).data('page');
+    sendData({},currentPage)
+  });
+
+  // Handle "Previous" button click
+  $('.pagination').on('click', '#prevPage', function() {
+    if (currentPage > 1) {
+      currentPage--;
+      sendData({},currentPage);
+    }
+  });
+
+  // Handle "Next" button click
+  $('.pagination').on('click', '#nextPage', function() {
+    if(currentPage < totalPages){
+      currentPage++;
+      sendData({},currentPage);
+    }
+  });
+
+  // price filter
+  $(function() {
+    const minValue = $("#minValue");
+    const maxValue = $("#maxValue");
+
+    // Initialize the slider
+    $("#priceSlider").slider({
+        range: true,
+        min: 0,
+        max: 10000,
+        values: [0, 10000],
+        slide: function(event, ui) {
+            minValue.text(ui.values[0]);
+            maxValue.text(ui.values[1]);
+            $('#sliderValues').val(ui.values[1]).trigger('change');
+            ui.values[1] < 10000 ? maxValue.removeClass('plus') : maxValue.addClass('plus');
+        }
+    });
+
+    // Set initial values
+    minValue.text($("#priceSlider").slider("values", 0));
+    maxValue.text($("#priceSlider").slider("values", 1));
+  });
+
+
+  const handleSearch = (query) => {
+    const searchQuery = query.trim().toLowerCase();
+    const filters = createFilters(searchQuery)
+    sendData(filters)
+  };
+
+  // Debounce function
+  let debounceTimer;
+  const debounce = function (callback, time) {
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => {
+          callback(); 
+      }, time);
+  };
+
+  // Event listener for input
+  $('#search-input').on('input', function(event) {
+    const query = event.target.value;
+    debounce(() => handleSearch(query), 1000);
+    getSuggessions(searchedString)
+  });
+
+  const searchedString = new URLSearchParams(window.location.search).get('search');
+  if(searchedString && searchedString.length > 0) {
+    $('#search-input').val(searchedString);
+    debounce(() => handleSearch(searchedString), 1000);
+  }
+
+  function getSuggessions(query) {
+    $.ajax({
+      type: 'GET',
+      url: '/products/suggest',
+      data: { search: query },
+      success: function(response){
+        $('#search-suggestions').html('')
+        response.suggestions.forEach(item => {
+          $('#search-suggestions').append(`<option value="${item}">`);
+        });
+      }
+      
+    });
+  }
+
+  // pagination
+  {{!-- document.addEventListener('DOMContentLoaded', function () {
+
+    const content = document.querySelector('.product-row'); 
+    const paginationWrapper = document.querySelector('.product-grid')
+    const itemsPerPage = 8;
+    let currentPage = 0;
+    const items = Array.from(content.querySelectorAll('.product-item-card')).slice(0);
+
+    function showPage(page) {
+      const startIndex = page * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      items.forEach((item, index) => {
+        item.classList.toggle('hidden', index < startIndex || index >= endIndex);
+      });
+      updateActiveButtonStates();
+    }
+
+    function createPageButtons() {
+      const totalPages = Math.ceil(items.length / itemsPerPage);
+      const paginationContainer = document.createElement('div');
+      const paginationDiv = document.body.appendChild(paginationContainer);
+      paginationContainer.classList.add('pagination');
+      const pageNunbers = document.createElement('div')
+      pageNunbers.classList.add('page-numbers')
+      paginationContainer.appendChild(pageNunbers)
+
+      for (let i = 0; i < totalPages; i++) {
+        const pageButton = document.createElement('a');
+        pageButton.classList.add('page-number');
+        pageButton.classList.add('cursor-pointer')
+        pageButton.classList.add('border')
+        pageButton.textContent = i + 1;
+        pageButton.addEventListener('click', () => {
+          currentPage = i;
+          showPage(currentPage);
+          updateActiveButtonStates();
+        });
+        paginationWrapper.appendChild(paginationContainer);
+        pageNunbers.appendChild(pageButton);
+      }
+    }
+
+    function updateActiveButtonStates() {
+      const pageButtons = document.querySelectorAll('.pagination a');
+      pageButtons.forEach((button, index) => {
+        if (index === currentPage) {
+          button.classList.add('current-page');
+        } else {
+          button.classList.remove('current-page');
+        }
+      });
+    }
+
+    createPageButtons();
+    showPage(currentPage);
+
+  }) --}}
+
+
+</script>

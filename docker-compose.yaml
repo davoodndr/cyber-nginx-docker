@@ -1,0 +1,40 @@
+
+services:
+  server:
+    restart: always
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: ${SERVER_HOST}
+    image: cyber-server-image
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - app-network
+    expose:
+      - ${PORT}
+
+  nginx:
+    restart: always
+    container_name: cyber-nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: cyber-nginx-image
+    env_file:
+      - .env
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - app-network
+    depends_on:
+      - server
+
+networks:
+  app-network:
+    driver: bridge

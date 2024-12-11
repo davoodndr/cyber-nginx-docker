@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber E-Commerce</title>
+
+  {{!-- links --}}
+    
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.all.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  
+  <link rel="stylesheet" href="/admin/styles/general.css">
+  <script src="/admin/js/jquery.vticker-min.js"></script>
+  
+
+  <script>
+
+    function Toast(time,icon,message) {
+      return Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: time,
+        timerProgressBar: true,
+        iconColor: 'white',
+        customClass: {
+          popup: 'colored-toast',
+        },
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      }).fire({
+        icon:icon,
+        title:message
+      });
+    }
+
+    function convertedDate(date){
+      const [day, month, year] = date.split('-');
+      return new Date(year, month-1, day);
+    }
+    
+    function formatDate(date){
+      date = new Date(date)
+      return ('0' + date.getDate()).slice(-2) + '-' +
+                        ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                        date.getFullYear();
+    }
+
+  </script>
+  
+</head>
+<body>
+
+  {{#if isAdmin}}
+    <div class="container-fluid centered-container admin-wrapper overflow-hidden">
+      <div class="row w-100 h-100">
+        {{!-- show navbar --}}
+        {{> navbar}}
+
+        {{!-- container for nav items --}}
+        <aside class="content-wrapper col-10 h-100 p-0 overflow-auto">
+          {{> header}}
+          {{{body}}}
+          
+        </aside>
+      </div>
+    </div>
+    {{> loader}}
+  {{else}}
+    
+    {{> user_header}}
+    <div class="container-fluid centered-container px-0" aria-hidden="false">
+      <div class="row w-100 m-0 flex-column">
+        {{{body}}}
+
+        {{> footer}}
+      </div>
+    </div>
+    
+    {{> loader}}
+  {{/if}}
+
+  <div class="modal fade" id="addAddress" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-body container-fluid">
+              <div class="close-wrapper">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <h5 class="modal-title">Add Address</h5>
+              <form  class="row flex-row flex-wrap w-100" id="add-new-address" autocomplete="off">
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Fullname<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.fullname}}is-invalid{{/if}}" name="fullname" 
+                      value="{{acc_values.fullname}}" placeholder="Enter your fullname">
+                      {{#if acc_info.fullname}}<span class="invalid-feedback">{{acc_info.fullname}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Phone<span class="text-danger fs-6">*</span></label>
+                    <input type="number" class="form-control {{#if acc_info.phone}}is-invalid{{/if}}" name="phone" 
+                      value="{{acc_values.phone}}" placeholder="Enter your phone number">
+                    {{#if acc_info.phone}}<span class="invalid-feedback">{{acc_info.phone}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Email<span class="text-danger fs-6">*</span></label>
+                    <input type="email" class="form-control {{#if acc_info.email}}is-invalid{{/if}}" name="email" 
+                      value="{{acc_values.email}}" placeholder="Enter your email">
+                    {{#if acc_info.email}}<span class="invalid-feedback">{{acc_info.email}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Address<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.address}}is-invalid{{/if}}" name="address" 
+                      value="{{acc_values.address}}" placeholder="Flat, House No, Building, Company, Apartment">
+                    {{#if acc_info.address}}<span class="invalid-feedback">{{acc_info.address}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Street/Village<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.street}}is-invalid{{/if}}" name="street" 
+                      value="{{acc_values.street}}" placeholder="Area, Street, Sector, Village">
+                    {{#if acc_info.street}}<span class="invalid-feedback">{{acc_info.street}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Landmark</label>
+                    <input type="text" class="form-control" name="landmark" value="{{acc_values.landmark}}" placeholder="eg : near example bridge">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Town/City<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.city}}is-invalid{{/if}}" name="city" 
+                      value="{{acc_values.city}}" placeholder="Enter your town/city">
+                    {{#if acc_info.city}}<span class="invalid-feedback">{{acc_info.city}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Pincode<span class="text-danger fs-6">*</span></label>
+                    <input type="number" class="form-control {{#if acc_info.pincode}}is-invalid{{/if}}" name="pincode" 
+                      value="{{acc_values.pincode}}" placeholder="Enter your pincode">
+                    {{#if acc_info.pincode}}<span class="invalid-feedback">{{acc_info.pincode}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">State<span class="text-danger fs-6">*</span></label>
+                    <select name="state" class="form-select state-select {{#if acc_info.state}}is-invalid{{/if}}" id="state-selector">
+                      <option value="">Select State</option>
+                    </select>
+                    {{#if acc_info.state}}<span class="invalid-feedback">{{acc_info.state}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Country<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.country}}is-invalid{{/if}}" name="country" 
+                      value="{{acc_values.country}}" placeholder="Enter your country">
+                    {{#if acc_info.country}}<span class="invalid-feedback">{{acc_info.country}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="form-group d-inline-flex align-items-center mt-2">
+                  <input type="checkbox" class="me-2" name="default">
+                  <label for="review-title" class="text-secondary m-0">Set as default</label>
+                </div>
+              </form>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" data-bs-dismiss="modal">Close</button>
+              <button type="submit" aria-label="" id="btn-new-address">Submit</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editAddress" tabindex="-1" aria-labelledby="editAddressLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-body container-fluid">
+              <div class="close-wrapper">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <h5 class="modal-title">Edit Address</h5>
+              <form action="" method="post" class="row flex-row flex-wrap w-100" id="update-address" autocomplete="off">
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Fullname<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.fullname}}is-invalid{{/if}}" name="fullname" 
+                      value="{{remember acc_values.fullname address.fullname}}" placeholder="Enter your fullname">
+                      {{#if acc_info.fullname}}<span class="invalid-feedback">{{acc_info.fullname}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Phone<span class="text-danger fs-6">*</span></label>
+                    <input type="number" class="form-control {{#if acc_info.phone}}is-invalid{{/if}}" name="phone" 
+                      value="{{remember acc_values.phone address.phone}}" placeholder="Enter your phone number">
+                    {{#if acc_info.phone}}<span class="invalid-feedback">{{acc_info.phone}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Email<span class="text-danger fs-6">*</span></label>
+                    <input type="email" class="form-control {{#if acc_info.email}}is-invalid{{/if}}" name="email" 
+                      value="{{remember acc_values.email address.email}}" placeholder="Enter your email">
+                    {{#if acc_info.email}}<span class="invalid-feedback">{{acc_info.email}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Address<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.address}}is-invalid{{/if}}" name="address" 
+                      value="{{remember acc_values.address address.address}}" placeholder="Flat, House No, Building, Company, Apartment">
+                    {{#if acc_info.address}}<span class="invalid-feedback">{{acc_info.address}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Street/Village<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.street}}is-invalid{{/if}}" name="street" 
+                      value="{{remember acc_values.street address.street}}" placeholder="Area, Street, Sector, Village">
+                    {{#if acc_info.street}}<span class="invalid-feedback">{{acc_info.street}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Landmark</label>
+                    <input type="text" class="form-control" name="landmark" value="{{remember acc_values.landmark address.landmark}}" placeholder="eg : near example bridge">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Town/City<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.city}}is-invalid{{/if}}" name="city" 
+                      value="{{remember acc_values.city address.city}}" placeholder="Enter your town/city">
+                    {{#if acc_info.city}}<span class="invalid-feedback">{{acc_info.city}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Pincode<span class="text-danger fs-6">*</span></label>
+                    <input type="number" class="form-control {{#if acc_info.pincode}}is-invalid{{/if}}" name="pincode" 
+                      value="{{remember acc_values.pincode address.pincode}}" placeholder="Enter your pincode">
+                    {{#if acc_info.pincode}}<span class="invalid-feedback">{{acc_info.pincode}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">State<span class="text-danger fs-6">*</span></label>
+                    <select name="state" class="form-select state-select {{#if acc_info.state}}is-invalid{{/if}}" {{!-- id="state-selector" --}}>
+                      <option value="">Select State</option>
+                    </select>
+                    {{#if acc_info.state}}<span class="invalid-feedback">{{acc_info.state}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-2">
+                    <label for="review-title">Country<span class="text-danger fs-6">*</span></label>
+                    <input type="text" class="form-control {{#if acc_info.country}}is-invalid{{/if}}" name="country" 
+                      value="{{remember acc_values.country address.country}}" placeholder="Enter your country">
+                    {{#if acc_info.country}}<span class="invalid-feedback">{{acc_info.country}}</span>{{/if}}
+                  </div>
+                </div>
+                <div class="form-group d-inline-flex align-items-center mt-2">
+                  <input type="checkbox" class="me-2" name="default" {{check (remember acc_values.isDefault address.isDefault) true}}>
+                  <label for="review-title" class="text-secondary m-0">Set as default</label>
+                </div>
+              </form>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="update-address">Update</button>
+              </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="selectAddress" tabindex="-1" aria-labelledby="selectAddressLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-custom">
+        <div class="modal-content">
+            <div class="modal-body container-fluid">
+              <div class="close-wrapper">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <h5 class="modal-title">Select Adsress</h5>
+              <div class="row mx-0 align-items-center overflow-auto address-select-container">
+
+                {{#each user.address_list}}
+                  <a onclick="selectAddress('{{this._id}}','{{@index}}')" aria-label="{{this._id}}" class="address-box">
+                    {{#if this.isDefault}} <span class="default-icon"><i class="las la-check-circle fs-4"></i></span>{{/if}}
+                    <h3 class="address-name mt-2">{{this.fullname}}</h3>
+                    <p class="address-details">
+                      {{this.address}}, {{this.street}},
+                      {{#if this.landmark}}{{this.landmark}},{{/if}}
+                      {{this.city}}, {{this.pincode}}
+                      {{this.state}}, {{this.country}}
+                    </p>
+                  </a>
+                {{/each}}
+                
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" data-bs-dismiss="modal">Close</button>
+              <button type="submit" id="btn-select-address">Apply</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.15/cropper.min.js"></script>
+
+  <script>
+
+    (function() {
+        'use strict';
+        const forms = document.querySelectorAll('form');
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+
+    let states = '{{{json states}}}'
+    const address_error = '{{acc_info.address_error}}'
+
+    if(states){
+      states = JSON.parse(states)
+      states.forEach(el => {
+        $('.state-select').each((i,select) =>{
+          $(select).append(`<option value="${el.toLowerCase()}">${el}</option>`)
+        })
+      })
+    }
+
+    $('#btn-new-address').on('click', function() {
+
+      const page = $(this).attr('aria-label')
+      const data = $('#add-new-address').serialize();
+
+      $.ajax({
+        type: "POST",
+        url: `/add-address?page=${page}`,
+        data: data,
+        success: function(response){
+          window.location.reload()
+        }
+      })
+
+    })
+    
+    function editAddress(address){
+      const myModal = new bootstrap.Modal(document.getElementById('editAddress'))
+      myModal.show();
+      address = JSON.parse(address)
+      $('#update-address').attr('action', `/update-address/${address._id}`)
+
+      $('#editAddress .state-select option').each((i, option) => {
+        if(option.value.toLowerCase() == `{{remember acc_values.state '${address.state}'}}`){
+          $(option).attr('selected',true)
+        }
+      })
+    }
+
+    if(address_error){
+      let myModal = new bootstrap.Modal($('#addAddress'))
+      myModal.show()
+    }
+
+    $('#addAddress').on('hide.bs.modal', function(){
+      if(address_error){
+        $.ajax({
+          type: 'get',
+          url: `/clear-session/${address_error}?destroy=true`,
+          success: function(response){
+          }
+        })
+      }
+    });
+
+    // template if not working
+    let user = undefined
+    user = '{{{json user}}}'
+    
+    $('#addAddress').on('show.bs.modal', function(event){
+      const btnVal = $(event.relatedTarget).data('val')
+      $('#btn-new-address').attr('aria-label', btnVal)
+    })
+
+    $('#selectAddress').on('show.bs.modal', function (event) {
+      const btn = $(event.relatedTarget).data('val')
+      $('.address-select-container').attr('aria-label',btn)
+      
+      if(user){
+        user = typeof user === 'string' ? JSON.parse(user) : user
+        $('.address-select-container .address-box').each((i, box) => {
+          if($(box).attr('aria-label') == user.selected_address){
+            selectAddress(user.selected_address,i)
+          }
+        })
+      }
+    })
+
+    $('#btn-select-address').on('click', function(){
+      location.reload()
+    })
+  
+  
+    // select address
+    function selectAddress(id, index){
+      
+      const type = $('.address-select-container').attr('aria-label')
+      $.ajax({
+        type: 'post',
+        url: '/select-address',
+        data: {id: id, type: type, index: index},
+        success: function(response){
+          if(response.success){
+            $('.address-select-container .address-box').eq(response.index).addClass('selected').siblings().removeClass('selected')
+          }
+        }
+      })
+    }
+
+
+  /* add Rating */
+    $('.star-rating').on('click',function(e){
+      
+      const stars = $(this).children()
+      const index = $(e.target).index();
+      if(e.target.className == 'star-icon'){
+        const isCkecked = $($(stars)[index]).css('--url') === "'/admin/images/icons/rating_star_filled.svg'"
+        if(isCkecked){
+          for (let i = 0; i < $(stars).length; i++) {
+            const star = stars[i];
+            if(i > index) {
+              $(star).css('--url',"'/admin/images/icons/rating_star_blank.svg'")
+            }else{
+              $(star).css('--url',"'/admin/images/icons/rating_star_filled.svg'")
+            }
+          }
+        }else{
+          for (let i = 0; i <= index; i++) {
+            const star = stars[i];
+            $(star).css('--url',"'/admin/images/icons/rating_star_filled.svg'")
+          }
+        }
+      } 
+    })
+
+    function getRating(rating){
+      let ratings = ''
+      for(let i = 0; i < 5; i++){
+        if(i < rating){
+          ratings += `<span class="customer-star-icon" style="--url: '/admin/images/icons/rating_star_filled.svg'"></span>`;
+        }else{
+          ratings += `<span class="customer-star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></span>`
+        }
+      }
+      return ratings
+    }
+    // Review Submit
+    $('#addReview').on('show.bs.modal', function (event) {
+      const valFromBtn = $(event.relatedTarget).data('val')
+      $('.add-review-container').attr('aria-label',valFromBtn)
+    })
+    
+    $('#review-submit').on('click', function(e){
+      let rate = 0;
+      $('.star-rating').children().each((i, el) => {
+        if($(el).css('--url') === "'/admin/images/icons/rating_star_filled.svg'"){
+          rate++
+        }
+      })
+
+      let data = {
+        rating: rate,
+        reviewTitle: $('#review-title').val(),
+        reviewText: $('#review-detail').val(),
+        productId: `${$('.add-review-container').attr('aria-label')}`,
+        user: '{{user._id}}'
+      }
+      
+      $.ajax({
+        type: 'POST',
+        url: `/add-review`,
+        data: data,
+        success: function(response) {
+          Swal.fire({
+            title: response.title,
+            text: response.msg,
+            icon: response.icon
+          }).then(()=>{
+            if(response.status === 400){
+              $('.star-rating').addClass('border-danger')
+            }else if(response.status === 401){
+              $('#review-title').addClass('is-invalid')
+            }else{
+              $('#addReview').hide()
+              window.location.reload()
+            }
+          });
+        }
+      });
+  
+    })
+
+    function addToCart(productId){
+      
+      const user = {{#if isLogged}} {{isLogged}} {{else}} undefined {{/if}};
+
+      if(!user){
+        Toast(2500,'error','Please login to add product to cart')
+        return false
+      }
+
+      let data = {
+        product_id: productId,
+      }
+      
+      $.ajax({
+        type: 'POST',
+        url: '/add-to-cart?increase=true',
+        data: data,
+        success: function(response) {
+          if(!response.success){
+            Toast(5000,'error',response.msg).then(() => {
+              // quantity check here to detect if it is button click or input change
+              if(response.quantity) location.reload()  
+            })
+            return false
+          }
+          if(response.success){
+            $('.cart .bubble').attr('aria-label', `${response.values.cart_count}`)
+            $('.cart .bubble').removeClass('hide')
+            Toast(1500,'success','Product added to cart')
+          }
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      })
+    
+    }
+
+    // Wishlist
+    function addOrRemoveWishlist(container,index,id, textChange=null){
+
+      const user = {{#if isLogged}} {{isLogged}} {{else}} undefined {{/if}};
+
+      if(!user){
+        Toast(2500,'error','Please login to add to Wishlist')
+        return false
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/add-to-wishlist',
+        data: {product: id},
+        success: function(response){
+          Toast(1500,response.icon, response.msg)
+          if(response.success){
+            if(response.values.removed){
+              $(container).eq(index).find('.favourit-img').attr('src','/admin/images/icons/unlike.svg')
+              $(container).eq(index).find('.favourit-img').css('border-color','')
+              if(textChange){
+                $(container).eq(index).find('span').text(textChange.add)
+              }
+            }else{
+              $(container).eq(index).find('.favourit-img').attr('src','/admin/images/icons/like.svg')
+              $(container).eq(index).find('.favourit-img').css('border-color','#ff0000')
+              if(textChange){
+                $(container).eq(index).find('span').text(textChange.remove)
+              }
+            }
+            $('.wishlist .bubble').attr('aria-label', `${response.values.count}`)
+            if(response.values.count){
+              $('.wishlist .bubble').removeClass('hide')
+            }else{
+              $('.wishlist .bubble').addClass('hide')
+            }
+            location.reload()
+          }
+        }
+      })
+    }
+
+    function addToBag(index,product,item){
+
+      const user = {{#if isLogged}}{{isLogged}}{{else}}undefined{{/if}}
+
+      if(!user){
+        Toast(2500,'error','Please login to add product to cart')
+        return false
+      }
+
+      let data = {
+        product_id: product,
+      }
+      
+      $.ajax({
+        type: 'POST',
+        url: '/add-to-cart?increase=true',
+        data: data,
+        success: function(response) {
+          if(!response.success){
+            Toast(5000,'error',response.msg).then(() => {
+              // quantity check here to detect if it is button click or input change
+              if(response.quantity) location.reload()  
+            })
+            return false
+          }
+          if(response.success){
+            $('.cart .bubble').attr('aria-label', `${response.values.cart_count}`)
+            $('.cart .bubble').removeClass('hide')
+            removeWishlistItem(item)
+            Toast(1500,'success','Product added to cart')
+          }
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      })
+    
+    }
+
+    // remove item from wishlist
+  function removeWishlistItem(itemId) {
+
+    $.ajax({
+      type: 'DELETE',
+      url:  `/remove-from-wishlist/${itemId}`,
+      success: function(response) {
+        if(response.success){
+          $('.product-row .wishlist-item').eq([response.deletedIndex]).remove()
+          if(response.wishlist_count === 0){
+            window.location.reload()
+          }else{
+            $('.bubble').attr('aria-label', `${response.wishlist_count}`)
+          }
+        }
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    })
+  }
+
+    /* Payment Section */
+    function razorpayPayment(order) {
+      const cur_user = {{#if user}} {{{json user}}} {{else}} undefined {{/if}};
+
+      if(cur_user){
+        let fullname = cur_user & cur_user.fullname ? cur_user.fullname : cur_user.username
+        fullname = fullname.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).toString().replace(',',' ')
+        // Open Razorpay Checkout
+        const options = {
+          key: order.RAZORPAY_KEY_ID,
+          amount: order.amount,
+          currency: order.currency,
+          name: order.name.split(' ')
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).toString(),
+          description: 'Test Transaction',
+          order_id: order.id,
+          prefill: {
+            name: fullname,
+            email: cur_user.email,
+            contact: cur_user.phone,
+          },
+          theme: {
+            color: '#F37254'
+          },
+          handler: function(response) {
+            response.handler = 'razorpay-success'
+            response.order_id = order.failed_order_id
+            response.amount = order.amount
+            verifyPayment(response)
+          },
+          retry: {
+            enabled: false,
+          },
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed',function(response){
+
+          response.handler = 'razorpay-failure'
+          response.order_id = order.failed_order_id
+          response.amount = order.amount
+          verifyPayment(response)
+          
+          Toast(2500,'error','Payment Failed. Please try again later.');
+          $('body').remove('.razorpay-container')
+        })
+        rzp.on('payment.cancelled',function(response){
+
+          response.handler = 'razorpay-cancel'
+          response.order_id = order.failed_order_id
+          response.amount = order.amount
+          verifyPayment(response)
+          
+          Toast(2500,'error','Payment Failed. Please try again later.');
+          $('body').remove('.razorpay-container')
+        })
+        rzp.open();
+        $('.loader-bg').css('display','none')
+      }
+  
+    }
+
+  function handleOrderSuccess(response) {
+
+    if(!response.status){
+      Swal.fire({
+        title: response.title,
+        text: response.msg,
+        icon: response.icon,
+        showDenyButton: true,
+        confirmButtonText: 'Later',
+        denyButtonText: 'Retry Now',
+        customClass:{
+          popup: 'alert-dialog-error',
+          confirmButton: 'alert-button-error',
+          denyButton: 'alert-button-success',
+        },
+        allowOutsideClick: false,
+        allowEscapeKey:false,
+      }).then((result) => {
+        $('.bubble').addClass('hide');
+        if (result.isConfirmed) {
+          window.location.href = `/user/account`;
+        } else if (result.isDenied) {
+          retryPayment(response.values.order_id)
+        }
+      });
+    }else{
+      Swal.fire({
+        title: response.title,
+        text: response.msg,
+        icon: response.icon,
+        showDenyButton: true,
+        confirmButtonText: 'View Order',
+        denyButtonText: 'Continue Shopping',
+        customClass:{
+          popup: 'alert-dialog',
+          confirmButton: 'alert-button',
+          denyButton: 'alert-button',
+        },
+        allowOutsideClick: false,
+        allowEscapeKey:false,
+      }).then((result) => {
+        $('.bubble').addClass('hide');
+        if (result.isConfirmed) {
+          window.location.href = `/user/view-order?id=${response.values.order_id}`;
+        } else if (result.isDenied) {
+          window.location.href = '/collections';
+        }
+      });
+    }
+  }
+  
+
+  function verifyPayment(response){
+
+    $.ajax({
+      type: 'POST',
+      url: '/verify-payment',
+      data: response,
+      success: function(response) {
+        $('.loader-bg').css('display','none')
+        handleOrderSuccess(response);
+      }
+    })
+  }
+
+  // retry payment
+  function retryPayment(orderId){
+    
+    if(orderId){
+      $.ajax({
+        type: 'POST',
+        url: '/retry-payment',
+        data: {order_id: orderId},
+        success: function(response){
+          razorpayPayment(response)
+        }
+      })
+    }
+  }
+
+  const products = {{#if products}} {{{json products}}} {{else}} undefined {{/if}};
+  
+  if(products){
+
+    products.forEach((product,i) => {
+
+      const badge_wrapper = $('.product-row .product-item-card').eq(i).find('.product-warning-badge')
+      const badge = $('.product-row .product-item-card').eq(i).find('.product-warning-badge .badge')
+    
+      if(product.product_status === 'disabled' || 
+        product.category.category_status === 'disabled'){
+          $(badge_wrapper).removeClass('d-none')
+        }else{
+          $(badge_wrapper).addClass('d-none')
+        }
+      
+      if(product.product_status === 'disabled' || product.category.category_status === 'disabled'){
+        $(badge_wrapper).addClass('bg-danger-subtle')
+        $(badge).addClass('text-danger')
+        $(badge).html('Unavailable')
+      }
+      
+    })
+  }
+
+  </script>
+  
+</body>
+</html>

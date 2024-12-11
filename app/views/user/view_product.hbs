@@ -1,0 +1,459 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/view_product.css">
+
+  <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+      <li class="breadcrumb-item">
+        <a href="/">Home</a>
+      </li>
+      <li class="breadcrumb-item">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+        <a href="/collections?category={{category._id}}">{{category.category_name}}</a>
+      </li>
+      <li class="breadcrumb-item breadcrumb-current">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bfd80c0d91b083fd6615c46809d59a6436c7d8053b049a460c5e712a453a7f67?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="breadcrumb-separator" />
+        <span aria-current="page">{{product.product_name}}</span>
+      </li>
+    </ol>
+  </nav>
+
+  <section class="row product-section">
+    <div class="col-6">
+      <div class="row gx-1 detail-gallery">
+        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+
+        <!-- THUMBNAILS -->
+        <div class="col-1 slider-nav-thumbnails">
+          {{#each product.images}}
+            <div><img src="{{this}}" alt="{{product.product_name}}"></div>
+          {{/each}}
+        </div>
+        <!-- MAIN SLIDES -->
+        <div class="col-11 product-image-slider">
+          {{#each product.images}}
+            <figure class="border-radius-10">
+                <img src="{{this}}" alt="{{product.product_name}}">
+            </figure>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="col-6 product-info">
+      <h1 class="product-title text-start mb-1">{{product.product_name}}</h1>
+      <p class="m-0 text-start fs-6 text-black-50"><span>In:</span> {{category.category_name}}</p>
+      <div class="d-flex align-items-center justify-content-between mt-2">
+        <div class="price-container {{#if product.discount}}m-0{{else}}mb-4{{/if}}">
+          {{#if product.pricing.selling_price}}
+          <span class="current-price price" style="line-height: normal;">{{product.pricing.selling_price}}</span>
+          <span class="original-price price" style="line-height: normal;">{{product.pricing.original_price}}</span>
+          {{else}}
+          <span class="current-price price" style="line-height: normal;">{{product.pricing.original_price}}</span>
+          {{/if}}
+        </div>
+        <div class="d-flex mb-4 rate-sum-wrapper">
+          <div class="product-rate-sum d-inline-block">
+              <div class="product-rating" style="width:{{product.rating.outOfFivePercent}}%">
+              </div>
+          </div>
+          <h6 class="mb-0 ms-2">{{product.rating.averageRating}}</h6>
+        </div>
+      </div>
+      <h5 class="text-danger text-start mb-3 
+        {{#if (and (eq product.product_status 'active') (eq category.category_status 'active'))}}d-none{{else}}''{{/if}}">
+        Product Unavailable
+      </h5>
+      {{#if product.discount}}
+        <span class="offer-badge mb-4">
+          <span class="{{#if (eq product.discount_type 'fixed')}}price{{else}}percentage{{/if}}">{{product.discount}}</span>
+        </span>
+      {{/if}}
+      <p class="product-description text-start">
+        {{product.description}}
+      </p>
+
+      {{#each coupons}}
+        <div class="d-inline-flex flex-column coupon-container mb-4">
+          <div class="d-flex align-items-center overflow-hidden mb-1">
+            <span class="coupon-badge me-2">Coupon:</span>
+            {{#if this.used}}
+            <span class="used-coupon-badge coupon-detail text-danger">Already used this coupon</span>
+            {{else}}
+            <span class="coupon-detail text-nowrap">Save up to 
+              {{#if (eq this.discount_type 'fixed')}}
+              <div class="ms-1 me-1"><span class="price">{{this.max_redeemable}}</span></div>
+              {{else}}
+              <div class="ms-1 me-1"><span class="percentage">{{this.max_redeemable}}</span></div>
+              {{/if}}
+              with coupon
+            </span>
+            <a class="mx-2 view-code text-nowrap" onclick="viewCode({{@index}})">
+              <span>View Code</span>
+              <i class="las la-angle-down"></i>
+            </a>
+            {{/if}}
+          </div>
+          <div class="d-inline-flex gap-4 align-items-center justify-content-between border-warning coupon-code-copier">
+            <span class="coupon-detail capitalize text-nowrap">{{this.description}}</span>
+            <input type="text" class="d-block w-auto border-0 fw-bold text-center" value="{{this.coupon_code}}">
+          </div>
+        </div>
+      {{/each}}
+        
+        <div class="memory-options">
+          {{#each product.variants}}
+            {{#if (eq this.var_name 'RAM')}}
+              <button class="memory-option">{{this.var_option}}</button>
+            {{/if}}
+          {{/each}}
+        </div>
+        
+        {{!-- Specs can here --}}
+      
+      <div class="action-buttons">
+        <button class="btn btn-outline" onclick="addOrRemoveWishlist('.action-buttons button:first-child','{{0}}','{{product._id}}',{add:'Add to Wishlist',remove:'Remove from Wishlist'})">
+          <img src="/admin/images/icons/{{arrayMatch wishlist product._id 'like' 'unlike'}}.svg" alt="New badge" class="product-badge">
+          <span>{{arrayMatch wishlist product._id 'Remove from Wishlist' 'Add to Wishlist'}}</span>
+        </button>
+        <button class="btn btn-primary" onclick="addToCart('{{product._id}}')">Add to Cart</button>
+      </div>
+      
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <div class="spec-icon" style="--url: url(/admin/images/icons/delivery_truck.svg);"></div>
+          </div>
+          <div class="feature-text">
+            Free Delivery
+            <br>
+            <strong>1-2 day</strong>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon border {{#if (eq product.stock 0)}}border-danger bg-danger-subtle{{else}}border-success bg-light{{/if}}">
+            <div class="spec-icon" style="--url: url(/admin/images/icons/shop.svg); --bg:{{#if (eq product.stock 0)}}var(--invalid-color){{else}}#198754{{/if}}"></div>
+          </div>
+          <div class="feature-text">
+            {{#if (gt product.stock 0)}}<span class="text-success border-danger">In Stock</span>{{else}}<span class="text-danger">Out of Stock</span>{{/if}}
+            <br>
+            <strong>Today</strong>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <div class="spec-icon" style="--url: url(/admin/images/icons/verify.svg);"></div>
+          </div>
+          <div class="feature-text">
+            Guaranteed
+            <br>
+            <strong>1 year</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="product-description-wrapper bg-light">
+    <div class="details-content">
+      <h2 class="details-title">Details &amp; Specifications</h2>
+      <p class="details-description">
+        {{product.description}}
+      </p>
+      <div class="specs-container">
+        <section class="specs-section">
+          <dl class="specs-list">
+            {{#if product.specifications}}
+              {{#each product.specifications}}
+                <div class="specs-item">
+                  <dt class="specs-label">{{this.spec_name}}</dt>
+                  <dd class="specs-value">{{this.spec_value}}</dd>
+                </div>
+              {{/each}}
+            {{/if}}
+          </dl>
+        </section>
+      </div>
+      <button class="view-more-button">
+        <span class="button-text">View More</span>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/a290bc04e1801f0cbae48ec6b718e7b5f2edd6032e00679fa3cebc97eda414f0?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="button-icon" />
+      </button>
+    </div>
+  </section>
+
+  <section class="reviews-container">
+    
+    <div class="section-title style-1 d-flex justify-content-between ">
+      <h3>Reviews ({{length product.rating.reviews}})</h3>
+      {{#if user}}
+        {{#if (eq product.product_status 'delivered')}}
+          <button type="button" class="submit-button" data-val="{{product._id}}" data-bs-toggle="modal" data-bs-target="#addReview">Add Review</button>
+        {{/if}}
+      {{/if}}
+    </div>
+
+    <div class="comments-area style-2">
+      <div class="row">
+        <div class="col-lg-8">
+          <h4 class="mb-30">Customer questions &amp; answers</h4>
+          <div class="comment-list">
+            {{#each product.rating.reviews}}
+              <div class="single-comment justify-content-between d-flex">
+                  <div class="user justify-content-between d-flex">
+                      <div class="thumb text-center">
+                          <img src="/admin/images/icons/avatar_m.png" alt="">
+                          <h6><a href="#">{{this.user.username}}</a></h6>
+                          <p class="font-xxs">Since {{formatDate this.createdAt 'YYYY'}}</p>
+                      </div>
+                      <div class="desc">
+                        <div class="product-rate d-inline-flex align-items-center">
+                          <div class="customer-rating">
+                            {{#each (listFromLength 5)}}
+                              {{#if (lt @index ../rating)}}
+                                <span class="customer-star-icon" style="--url: '/admin/images/icons/rating_star_filled.svg'"></span>
+                              {{else}}
+                                <span class="customer-star-icon" style="--url: '/admin/images/icons/rating_star_blank.svg'"></span>
+                              {{/if}}
+                            {{/each}}
+                          </div>
+                          <p class="review-title m-0">{{this.reviewTitle}}</p>
+                        </div>
+                        <p class="desc-text">{{this.reviewText}}</p>
+                        <p class="review-date">{{formatDate this.date 'MMMM Do YYYY, h:mm:ss a'}}</p>
+                      </div>
+                  </div>
+              </div>
+            {{else}}
+              {{#if user}}
+                {{#if (eq product.product_status 'delivered')}}
+                  <div class="d-flex border w-100 justify-content-center rounded py-5">
+                    <h5 class="m-0">Add review for this product</h5>
+                  </div>
+                {{else}}
+                  <div class="d-flex border w-100 justify-content-center rounded py-5">
+                    <h5 class="m-0">No reviews added till yet</h5>
+                  </div>
+                {{/if}}
+              {{else}}
+                <div class="d-flex border w-100 justify-content-center rounded py-5">
+                  <h5 class="m-0">No reviews added till yet</h5>
+                </div>
+              {{/if}}
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <h4 class="mb-30">Customer reviews</h4>
+          <div class="d-flex mb-4 rate-sum-wrapper">
+              <div class="product-rate-sum d-inline-block">
+                  <div class="product-rating" style="width:{{product.rating.outOfFivePercent}}%">
+                  </div>
+              </div>
+              <h6 class="mb-0 ms-5">{{product.rating.averageRating}} out of 5</h6>
+          </div>
+          <div class="progress">
+              <span>5 star</span>
+              <div class="progress-bar" role="progressbar" style="width: {{product.rating.ratingPercent.[5]}}%;" aria-valuenow="{{product.rating.ratingPercent.[5]}}" aria-valuemin="0" aria-valuemax="100">{{product.rating.ratingPercent.[5]}}%</div>
+          </div>
+          <div class="progress">
+              <span>4 star</span>
+              <div class="progress-bar" role="progressbar" style="width: {{product.rating.ratingPercent.[4]}}%;" aria-valuenow="{{product.rating.ratingPercent.[4]}}" aria-valuemin="0" aria-valuemax="100">{{product.rating.ratingPercent.[4]}}%</div>
+          </div>
+          <div class="progress">
+              <span>3 star</span>
+              <div class="progress-bar" role="progressbar" style="width: {{product.rating.ratingPercent.[3]}}%;" aria-valuenow="{{product.rating.ratingPercent.[3]}}" aria-valuemin="0" aria-valuemax="100">{{product.rating.ratingPercent.[3]}}%</div>
+          </div>
+          <div class="progress">
+              <span>2 star</span>
+              <div class="progress-bar" role="progressbar" style="width: {{product.rating.ratingPercent.[2]}}%;" aria-valuenow="{{product.rating.ratingPercent.[2]}}" aria-valuemin="0" aria-valuemax="100">{{product.rating.ratingPercent.[2]}}%</div>
+          </div>
+          <div class="progress mb-30">
+              <span>1 star</span>
+              <div class="progress-bar" role="progressbar" style="width: {{product.rating.ratingPercent.[1]}}%;" aria-valuenow="{{product.rating.ratingPercent.[1]}}" aria-valuemin="0" aria-valuemax="100">{{product.rating.ratingPercent.[1]}}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  {{!-- related products --}}
+  <section class="discount-section">
+    <h2 class="discount-title mb-4">Related Products</h2>
+    <div class="product-row">
+      {{#each related_products}}
+        <div class="product-item-card border">
+          {{!-- <div class="bg-warning product-warning-badge">
+            <span class="badge">New</span>
+          </div> --}}
+          <a href="/view-product/{{this.product_slug}}" class="card-detail-wrapper">
+            <div class="card-img-wrapper">
+              <img src="{{this.images.[0]}}" alt="{{this.product_name}}">
+            </div>
+            
+            <div class="d-flex flex-column w-100 rate-sum-wrapper">
+              <div class="d-inline-flex align-items-center justify-content-between">
+                <small class="capitalize small-muted">{{this.category.category_name}}</small>
+                <small class="capitalize small-muted {{#if this.stock}}text-success{{else}}text-danger{{/if}}">
+                  {{#if this.stock}}{{this.stock}} in stock
+                  {{else}}Out of stock
+                  {{/if}}
+                </small>
+              </div>
+              <h6 class="mb-1">{{this.product_name}}</h6>
+              <div class="d-inline-flex card-rating">
+                <div class="product-card-rate-sum d-inline-block">
+                  <div class="product-rating" style="width:{{this.rating.outOfFivePercent}}%">
+                  </div>
+                </div>
+                <span class="mb-0 ms-1 card-rating-value">{{this.rating.averageRating}}</span>
+                <span class="devider"></span>
+                <i class="las la-sms"></i>
+                <span class="mb-0 ms-1 card-rating-value">{{this.rating.totalReviews}}</span>
+              </div>
+            </div>
+          </a>
+          <div class="card-price-wrapper">
+            <div class="d-inlne-flex flex-column">
+              <h4 class="m-0 price" style="line-height:1 !important">
+                {{#if this.discount}}{{this.pricing.selling_price}}
+                {{else}}{{this.pricing.original_price}}
+                {{/if}}
+              </h4>
+              {{#if this.discount}}
+              <div class="d-inline-flex card-offers">
+                <span class="original-price card-original-price price"  style="line-height:1 !important">{{this.pricing.original_price}}</span>
+                <span class="ms-1 off-discount">-<span class="{{#if (eq this.discount_type 'fixed')}}price{{else}}percentage{{/if}}">{{this.discount}}</span></span>
+              </div>
+              {{/if}}
+            </div>
+            <div class="card-icons-wrapper">
+              <img class="favourit-img" src="/admin/images/icons/{{arrayMatch ../wishlist this._id 'like' 'unlike'}}.svg" 
+                style="border-color: {{arrayMatch ../wishlist this._id '#ff0000' ''}};"
+                onclick="addOrRemoveWishlist('.product-row .card-icons-wrapper','{{@index}}','{{this._id}}')" alt="New badge">
+              <img src="/admin/images/icons/cart_outline.svg" alt="">
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  {{> add_review}}
+
+  <script>
+
+    /* Image Slider */
+
+    (function ($) {
+      'use strict';
+      /*Product Details*/
+      var productDetails = function () {
+          $('.product-image-slider').slick({
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false,
+              fade: false,
+              asNavFor: '.slider-nav-thumbnails',
+          });
+
+          $('.slider-nav-thumbnails').slick({
+              slidesToShow: 6,
+              slidesToScroll: 1,
+              asNavFor: '.product-image-slider',
+              dots: false,
+              focusOnSelect: true,
+              vertical:true,
+              verticalSwiping:true,
+              {{!-- prevArrow: '<button type="button" class="slick-prev"><i class="las la-angle-left"></i></button>',
+              nextArrow: '<button type="button" class="slick-next"><i class="las la-angle-right"></i></button>' --}}
+          });
+
+          // Remove active class from all thumbnail slides
+          $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
+
+          // Set active class to first thumbnail slides
+          $('.slider-nav-thumbnails .slick-slide').eq(0).addClass('slick-active');
+
+          // On before slide change match active thumbnail to current slide
+          $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+              var mySlideNumber = nextSlide;
+              $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
+              $('.slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
+          });
+
+          $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+              var img = $(slick.$slides[nextSlide]).find("img");
+              $('.zoomWindowContainer,.zoomContainer').remove();
+              $(img).elevateZoom({
+                  zoomType: "inner",
+                  cursor: "crosshair",
+                  zoomWindowFadeIn: 500,
+                  zoomWindowFadeOut: 750
+              });
+          });
+          //Elevate Zoom
+          if ( $(".product-image-slider").length ) {
+              $('.product-image-slider .slick-active img').elevateZoom({
+                  zoomType: "inner",
+                  cursor: "crosshair",
+                  zoomWindowFadeIn: 500,
+                  zoomWindowFadeOut: 750
+              });
+          }
+          //Filter color/Size
+          $('.list-filter').each(function () {
+              $(this).find('a').on('click', function (event) {
+                  event.preventDefault();
+                  $(this).parent().siblings().removeClass('active');
+                  $(this).parent().toggleClass('active');
+                  $(this).parents('.attr-detail').find('.current-size').text($(this).text());
+                  $(this).parents('.attr-detail').find('.current-color').text($(this).attr('data-color'));
+              });
+          });
+          //Qty Up-Down
+          $('.detail-qty').each(function () {
+              var qtyval = parseInt($(this).find('.qty-val').text(), 10);
+              $('.qty-up').on('click', function (event) {
+                  event.preventDefault();
+                  qtyval = qtyval + 1;
+                  $(this).prev().text(qtyval);
+              });
+              $('.qty-down').on('click', function (event) {
+                  event.preventDefault();
+                  qtyval = qtyval - 1;
+                  if (qtyval > 1) {
+                      $(this).next().text(qtyval);
+                  } else {
+                      qtyval = 1;
+                      $(this).next().text(qtyval);
+                  }
+              });
+          });
+
+          $('.dropdown-menu .cart_list').on('click', function (event) {
+              event.stopPropagation();
+          });
+      };
+      //Load functions
+      $(document).ready(function () {
+          productDetails();
+      });
+
+    })(jQuery);
+
+    // add to cart
+
+    // show code
+    function viewCode(index){
+      const isHidden = $('.coupon-container .coupon-code-copier').eq(index).css('visibility') === 'hidden'
+      if(isHidden){
+        $('.coupon-container .coupon-code-copier').eq(index).addClass('show')
+      }else{
+        $('.coupon-container .coupon-code-copier').eq(index).removeClass('show')
+      }
+    }
+
+  </script>

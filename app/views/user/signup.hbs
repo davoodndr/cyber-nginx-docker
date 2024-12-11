@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/signup.css">
+
+<main class="main-content">
+  <div class="content-wrapper">
+    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0f91d2663027b19cd6e935f7d9422c80eda6e589e8aa1981c68f1063f96daf36?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Signup Illustration" class="signup-image" />
+    
+    <form action="/do-signup" class="signup-form" method="post">
+      <div class="form-header">
+        <h2 class="form-title">Create Account</h2>
+        <p class="form-subtitle">Own your account providing credentials</p>
+      </div>
+      <div class="form-fields">
+        <div class="input-group mb-3">
+          <div class="input-field w-100">
+            <input name="username" type="text" class="form-control {{#if signup_info.username}}is-invalid invalid-height{{/if}}"
+              value="{{signup_values.username}}" placeholder="User name">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e88ba37a8eb2b36d135b08665c7aa6ce13cedd88333ac1e4d5973bb829271429?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="input-icon" />
+            {{#if signup_info.username}}<span class="invalid-feedback">{{signup_info.username}}</span>{{/if}}
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-field w-100">
+            <input name="email" type="email" class="form-control {{#if signup_info.email}}is-invalid invalid-height{{/if}}"
+              value="{{signup_values.email}}"  placeholder="Email">
+            <img src="admin/images/icons/Mail.png" class="mail_icon" alt="">
+            {{#if signup_info.email}}<span class="invalid-feedback">{{signup_info.email}}</span>{{/if}}
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-field w-100">
+            <input name="password" type="password" class="form-control {{#if signup_info.password}}is-invalid invalid-height{{/if}}"
+              value="{{signup_values.password}}" placeholder="Password">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/04660c00e474cbfed670a63ce141b90f3348177cb8dd7a2f8e4e4d2353bc96e2?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="" class="input-icon" />
+            {{#if signup_info.password}}<span class="invalid-feedback">{{signup_info.password}}</span>{{/if}}
+          </div>
+        </div>
+      </div>
+      <div class="terms-agreement">
+        <div class="checkbox-wrapper form-control {{#if signup_info.terms}}is-invalid invalid-height{{/if}}">
+          <input type="checkbox" name="terms" {{#if (eq signup_values.terms 'on')}}checked{{/if}}>
+          <p class="terms-text">I agree to the <a href="#">terms of service</a> and <a href="#">privacy policy</a></p>
+        </div>
+        {{#if signup_info.terms}}<span class="invalid-feedback">{{signup_info.terms}}</span>{{/if}}
+      </div>
+      <button type="submit" class="signup-button">Sign Up</button>
+      <div class="or-divider">
+        <span>---------------</span> OR <span>----------------</span>
+      </div>
+      <a href="/auth/google" class="google-signup">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/65968de2004438662826ea254b3839fc7edd3e0d2b8aebeccbd0431bcecf640e?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" alt="Google Logo" class="google-icon" />
+        <span class="google-text">Sign up with Google</span>
+      </a>
+      <p class="login-link">Already have an Account? <a href="/login" style="font-weight: 700; text-decoration: underline">Login</a></p>
+    </form>
+  </div>
+</main>
+
+<script>
+
+  const info = '{{signup_info}} | {{json signup_values}}'
+  const status = '{{signup_info.status}}'
+  
+
+  if(status){
+    const {title,msg,icon} = JSON.parse('{{{json signup_info}}}')
+    
+    Swal.fire({
+      title: title,
+      text: msg,
+      icon: icon,
+    }).then(() => {
+      $.ajax({
+          type: 'GET',
+          url: `/clear-session/${status}?destroy=${status}&&redirect=true`,
+          success: function(res) {
+            if(res.status = 201 || res.redirect){
+              location.reload()
+            }
+          }
+      });
+    })
+  }
+
+  $('.signup-form').on('submit',function(){
+    $('.loader-bg').css('display','flex')
+  })
+
+</script>

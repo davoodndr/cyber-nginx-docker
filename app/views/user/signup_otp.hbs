@@ -1,0 +1,164 @@
+
+<link rel="stylesheet" href="/user/styles/home.css">
+<link rel="stylesheet" href="/user/styles/signup.css">
+
+<section class="email-verification">
+  <div class="verification-wrapper">
+    <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/27fb79599f52adefbc759ee7fe9f28c4751169f668b31efa9608b2528e54b2cb?placeholderIfAbsent=true&apiKey=4312beba142048a48d6010ff440bfdd8" class="verification-image" alt="Email verification illustration" />
+    <form class="verification-form" autocomplete="off">
+      <header class="form-header">
+        <h2 class="form-title">Verify your Email Address</h2>
+        <p class="form-subtitle">We have sent OTP to your email, just use it here</p>
+      </header>
+      <div class="form-content">
+        <div class="otp-input-container">
+          <label for="otp1" class="visually-hidden">OTP digit 1</label>
+          <input type="number" id="otp1" class="otp-input" maxlength="1" aria-label="OTP digit 1" />
+          <label for="otp2" class="visually-hidden">OTP digit 2</label>
+          <input type="number" id="otp2" class="otp-input" maxlength="1" aria-label="OTP digit 2" />
+          <label for="otp3" class="visually-hidden">OTP digit 3</label>
+          <input type="number" id="otp3" class="otp-input" maxlength="1" aria-label="OTP digit 3" />
+          <label for="otp4" class="visually-hidden">OTP digit 4</label>
+          <input type="number" id="otp4" class="otp-input" maxlength="1" aria-label="OTP digit 4" />
+          <label for="otp5" class="visually-hidden">OTP digit 5</label>
+          <input type="number" id="otp5" class="otp-input" maxlength="1" aria-label="OTP digit 5" />
+          <label for="otp6" class="visually-hidden">OTP digit 6</label>
+          <input type="number" id="otp6" class="otp-input" maxlength="1" aria-label="OTP digit 6" />
+        </div>
+        <div class="otp-info">
+          <div class="otp-timer-resend">
+            <p class="otp-timer"><span class="otp-timer-info">OTP Expires in :</span> <span id="timerValue" style="color: #000">00 : 00 : 00</span></p>
+            <button type="button" class="resend-button">Resend</button>
+          </div>
+        </div>
+        <button type="button" class="verify-button">Verify</button>
+        <p class="text-center change-email-link">
+          Want to change your email? <a href="/signup" style="font-weight: 700; text-decoration: underline">Click Here</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+
+  let timer = 60;
+  let timerInterval;
+  
+  //enable otp inputs
+  enableControls()
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timer--;
+      $("#timerValue").text(`00 : 00 : ${timer < 10 ? '0'+timer : timer}`);
+      if (timer <= 0) {
+        clearInterval(timerInterval);
+        // disable inputs
+        disableControls()
+      }
+    }, 1000);
+    $.ajax({
+      type: 'GET',
+      url: '/remove-timer',
+      success: function(response) {}
+    })
+  }
+  
+  {{start}} ? startTimer() : window.location.href = '/signup';
+  
+  $('.verify-button').on('click', function(){
+    const otp = $('.otp-input-container > input').map((index, el) => el.value).toArray().join().replaceAll(',','')
+
+    if(parseInt(otp)) {
+
+      let data = new FormData()
+      data.append('otp',otp)
+
+      $.ajax({
+          type: 'POST',
+          url: `/verify-otp`,
+          data: {'otp':otp},
+          beforeSend: function(){
+            $('.loader-bg').css('display','flex')
+          },
+          success: function(res) {
+            $('.loader-bg').css('display','none')
+            Swal.fire({
+              title: res.title,
+              text: res.msg,
+              icon: res.icon,
+            }).then(()=>{
+              
+              if(res.status === 201){
+                $.ajax({
+                type: 'GET',
+                url: `/clear-session/${201}?redirect=signup`,
+                  success: function(response) {
+                    window.location.href = res.values.url
+                  }
+                })
+              }
+              
+            });
+          }
+      });
+    }
+  })
+
+  function enableControls(){
+    $('.resend-button').attr('disabled',true)
+    $('.verify-button').attr('disabled',false)
+    $('.resend-button').addClass('disabled')
+    $('.verify-button').removeClass('disabled')
+    $('.otp-timer-info').text('OTP Expires in : ').removeClass('text-danger')
+    $('.otp-input-container > input').map((index, el) => {
+      el.removeAttribute('disabled')
+      $(el).val('')
+    })
+  }
+
+  function disableControls(){
+    $('.otp-input-container > input').map((index, el) => {
+      el.setAttribute('disabled','disabled')
+      $(el).val('')
+    })
+    $('.resend-button').attr('disabled',false)
+    $('.resend-button').removeClass('disabled')
+    $('.verify-button').attr('disabled',true)
+    $('.verify-button').addClass('disabled')
+    $('.otp-timer-info').text('OTP Expired').addClass('text-danger')
+    $("#timerValue").text('')
+  }
+
+  $('.resend-button').on('click',function(){
+
+    clearInterval(timerInterval)
+    
+    $.ajax({
+        type: 'POST',
+        url: `/resend-otp`,
+        beforeSend: function(){
+          $('.loader-bg').css('display','flex')
+        },
+        success: function(res) {
+          $('.loader-bg').css('display','none')
+          Swal.fire({
+            title: res.title,
+            text: res.msg,
+            icon: res.icon,
+          }).then(()=>{
+            if(res.status == 200){
+              timer = 60;
+              enableControls()
+              startTimer()
+            }
+            if(res.url) window.location.href = res.url
+          });
+        }
+    });
+
+  })
+
+
+</script>
